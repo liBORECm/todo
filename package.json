@@ -4,6 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "dev": "tsx --watch server.ts",
     "db:setup": "knex migrate:latest --env development",
     "db:rollback": "knex migrate:rollback --env development",
