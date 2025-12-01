@@ -54,7 +54,7 @@ app.get("/:user", async (req, res) => {
       .orderBy("id", order)
 
   if (hideFinished === "false") {
-  } else tasksQuery.where("finished_at", "")
+  } else tasksQuery.whereNull("finished_at").orWhere("finished_at", "")
 
   const tasks = await tasksQuery
   res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user })
