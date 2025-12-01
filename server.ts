@@ -96,6 +96,6 @@ app.get("/:user/:id/done", async (req, res) => {
   res.redirect(`/${req.params.user}`)
 })
 
-app.listen(process.env.PORT, '0.0.0.0', () =>
+app.listen(Number(process.env.PORT!), '0.0.0.0', () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
 )
