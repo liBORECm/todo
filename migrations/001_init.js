@@ -1,6 +1,6 @@
 export async function up(knex) {
   await knex.raw(
-    `ALTER DATABASE budget CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+    `ALTER DATABASE todo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
   )
 
   return knex.schema.createTable("tasks", (table) => {
