@@ -15,6 +15,9 @@ app.get("/", async (req, res) => {
   res.render("tableSelect.ejs", { tables: users })
 })
 
+/**
+ * Renders dashboard
+ */
 app.get("/:user", async (req, res) => {
   const user = req.params.user
 
@@ -60,12 +63,19 @@ app.get("/:user", async (req, res) => {
   res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user })
 })
 
+/**
+ * Renders form for new standard task
+ */
 app.get("/:user/newForm", async (req, res) => {
   const user = req.params.user
 
   res.render("newTaskForm.ejs", { user: user })
 })
 
+/**
+ * Is redirected from new standard task form, creates task and redirects
+ * back to standard dashboard
+ */
 app.post("/:user/new", async (req, res) => {
   const user = req.params.user
   if (!users.includes(user))
@@ -87,6 +97,10 @@ app.post("/:user/new", async (req, res) => {
   res.redirect(`/${user}`)
 })
 
+/**
+ * Is redirected from dashboard, updated task and redirects
+ * back to dashboard
+ */
 app.get("/:user/:id/done", async (req, res) => {
   await db("tasks")
     .select("*")
@@ -96,6 +110,6 @@ app.get("/:user/:id/done", async (req, res) => {
   res.redirect(`/${req.params.user}`)
 })
 
-app.listen(Number(process.env.PORT!), '0.0.0.0', () =>
+app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
 )
