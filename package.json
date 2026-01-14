@@ -2,9 +2,9 @@
   "name": "todo",
   "version": "1.0.0",
   "main": "server.js",
-  "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy",
+    "copy": "cp -r views dist/ && cp -r migrations dist/ && cp .env dist/ && cp package.json dist/ && cp -r node_modules dist/",
     "dev": "tsx --watch server.ts",
     "db:setup": "knex migrate:latest --env development",
     "db:rollback": "knex migrate:rollback --env development",
