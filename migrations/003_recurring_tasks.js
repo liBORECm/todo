@@ -6,7 +6,6 @@ export async function up(knex) {
     table.text("description")
     table.timestamp("created_at").defaultTo(knex.fn.now())
     table.timestamp("deleted_at").nullable().defaultTo(null)
-    table.date("deadline")
     table.enum("priority", ["0", "1", "2"]).notNullable().defaultTo("1")
   })
 
@@ -19,7 +18,7 @@ export async function up(knex) {
     .inTable("tasks_prefab")
     table.timestamp("scheduled_at").defaultTo(knex.fn.now())
     table.timestamp("finished_at")
-    table.unique(["prefab_id", "scheduled_for"])
+    table.unique(["prefab_id", "scheduled_at"])
   })
 }
 
