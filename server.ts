@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import { db } from "./db"
+import { isValidCron } from "cron-validator"
 
 dotenv.config({ quiet: true })
 const app = express()
@@ -125,8 +126,9 @@ app.get("/:user/prefabTable", async (req, res) => {
  */
 app.get("/:user/newPrefabForm", async (req, res) => {
   const user = req.params.user
+  const invalid_cron = req.query.invalid_cron
 
-  res.render("newPrefabTaskForm.ejs", { user: user })
+  res.render("newPrefabTaskForm.ejs", { user, invalid_cron })
 })
 
 /**
@@ -137,7 +139,7 @@ app.post("/:user/newPrefab", async (req, res) => {
   const user = req.params.user
   if (!users.includes(user))
     return res.status(500).json({ error: "unknown user" })
-  
+
   const name = req.body.name
   const description = req.body.description
   const cronDayOfMonth = req.body.cron_day_of_month
@@ -145,30 +147,28 @@ app.post("/:user/newPrefab", async (req, res) => {
   const cronDayOfWeek = req.body.cron_day_of_week
   const priority = req.body.priority
 
-  console.log(user, name,
-description,
-cronDayOfMonth,
-cronMonth,
-cronDayOfWeek,
-priority,)
-  /*
+  if (!isValidCron(`0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`)) {
+    res.redirect(
+      `/${user}/newPrefabForm?invalid_cron=${cronDayOfMonth}_${cronMonth}_${cronDayOfWeek}`
+    )
+  }
 
-  await db("tasks").insert({
+  await db("tasks_prefab").insert({
     name,
     user,
     description,
-    deadline,
     priority,
+    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
   })
 
-  res.redirect(`/${user}`) */
+  res.redirect(`/${user}/prefabTable`)
 })
 
 /**
  * Is redirected from prefab tasks dashboard, deletes prefab task and redirects
  * back to dashboard
  */
-app.get("/:user/:id/prefabRemoved", async (req, res) => {
+app.post("/:user/:id/prefabRemoved", async (req, res) => {
   /* await db("tasks")
     .select("*")
     .where("id", req.params.id)
@@ -176,7 +176,6 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
 
   res.redirect(`/${req.params.user}`) */
 })
-
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
