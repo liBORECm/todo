@@ -7,6 +7,7 @@ export async function up(knex) {
     table.timestamp("created_at").defaultTo(knex.fn.now())
     table.timestamp("deleted_at").nullable().defaultTo(null)
     table.enum("priority", ["0", "1", "2"]).notNullable().defaultTo("1")
+    table.string("cron").notNullable()
   })
 
   await knex.schema.createTable("tasks_clone", (table) => {
