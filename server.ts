@@ -3,6 +3,9 @@ import dotenv from "dotenv"
 import cors from "cors"
 import { db } from "./db"
 import { isValidCron } from "cron-validator"
+import { CronExpressionParser } from "cron-parser"
+import cron from 'node-cron';
+
 
 dotenv.config({ quiet: true })
 const app = express()
@@ -187,6 +190,47 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
   .whereBetween("scheduled_at", [today midnight, tomorrow midnight]) 
   */
 })
+
+async function clonePrefabs() {
+  //this function runs at around 00:30 every day
+  console.log("running clonePreafbs()! ")
+  const now = new Date();
+
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const prefabs = await db("tasks_prefab").whereNull("deleted_at")
+  const prefabsFiltered = prefabs.filter((prefab) => {
+    const cronPrev = CronExpressionParser.parse(prefab.cron, {
+      currentDate: now,
+      tz: "Europe/Prague"
+    }).prev()
+      .toDate()
+    
+    console.log(prefab, null, 2)
+    console.log(cronPrev, startOfToday, now)
+    
+    return (
+      cronPrev >= startOfToday &&
+      cronPrev <= now
+    )
+  })
+
+  console.log(JSON.stringify(prefabsFiltered, null, 2))
+
+  for (let i = 0; i < prefabsFiltered.length; i++) {
+    const prefab = prefabsFiltered[i];
+    await db("tasks_clone").insert({
+      prefab_id: prefab.id,
+      scheduled_at: startOfToday
+    })
+  }
+
+}
+
+cron.schedule("10 0 * * *", clonePrefabs,   {
+    timezone: "Europe/Prague"
+  })
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
