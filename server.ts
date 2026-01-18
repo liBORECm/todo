@@ -197,13 +197,17 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
 /**
  * Is redirected from task dashboard, updates task clone and redirects back
  */
-app.get("/:user/:id/cloneDone", async (req, res) => {
-  /* 
+app.get("/:user/:id/cloneDone", async (req, res) => { 
+  const todayLocalDate = new Date()
+  todayLocalDate.setHours(0, 0, 0, 0)
+  
   const id = req.params.id
   await db("tasks_clone")
   .where("prefab_id", id)
-  .whereBetween("scheduled_at", [today midnight, tomorrow midnight]) 
-  */
+  .andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate])
+  .update("finished_at", db.fn.now())
+
+  res.redirect(`/${req.params.user}`)
 })
 
 async function clonePrefabs() {
