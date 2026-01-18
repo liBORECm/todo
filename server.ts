@@ -176,6 +176,18 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
   res.redirect(`/${req.params.user}/prefabTable`)
 })
 
+/**
+ * Is redirected from task dashboard, updates task clone and redirects back
+ */
+app.get("/:user/:id/cloneDone", async (req, res) => {
+  /* 
+  const id = req.params.id
+  await db("tasks_clone")
+  .where("prefab_id", id)
+  .whereBetween("scheduled_at", [today midnight, tomorrow midnight]) 
+  */
+})
+
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
 )
