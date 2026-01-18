@@ -168,13 +168,12 @@ app.post("/:user/newPrefab", async (req, res) => {
  * Is redirected from prefab tasks dashboard, deletes prefab task and redirects
  * back to dashboard
  */
-app.post("/:user/:id/prefabRemoved", async (req, res) => {
-  /* await db("tasks")
-    .select("*")
+app.get("/:user/:id/prefabRemoved", async (req, res) => {
+  await db("tasks_prefab")
     .where("id", req.params.id)
-    .update("finished_at", db.fn.now())
+    .update("deleted_at", db.fn.now())
 
-  res.redirect(`/${req.params.user}`) */
+  res.redirect(`/${req.params.user}/prefabTable`)
 })
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
