@@ -124,24 +124,34 @@ app.get("/:user/prefabTable", async (req, res) => {
  * Renders form for new standard task
  */
 app.get("/:user/newPrefabForm", async (req, res) => {
-  /* const user = req.params.user
+  const user = req.params.user
 
   res.render("newPrefabTaskForm.ejs", { user: user })
- */})
+})
 
 /**
  * Is redirected from new prefab task form, creates task and redirects
  * back to prefab dashboard
  */
 app.post("/:user/newPrefab", async (req, res) => {
-  /* const user = req.params.user
+  const user = req.params.user
   if (!users.includes(user))
     return res.status(500).json({ error: "unknown user" })
-
+  
   const name = req.body.name
   const description = req.body.description
-  const deadline = req.body.deadline === "" ? null : req.body.deadline
+  const cronDayOfMonth = req.body.cron_day_of_month
+  const cronMonth = req.body.cron_month
+  const cronDayOfWeek = req.body.cron_day_of_week
   const priority = req.body.priority
+
+  console.log(user, name,
+description,
+cronDayOfMonth,
+cronMonth,
+cronDayOfWeek,
+priority,)
+  /*
 
   await db("tasks").insert({
     name,
