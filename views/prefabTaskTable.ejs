@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wrapper {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      min-width: 600px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      white-space: nowrap;
+      /* zabraňuje zalomení textu */
+      background: #fafafa;
+      font-weight: bold;
+    }
+
+    tr:hover td {
+      background: #f0f7ff;
+    }
+
+    th a {
+      color: inherit;
+      /* převezme barvu z th (černá) */
+      text-decoration: none;
+      /* odstraní podtržení */
+      border-bottom: 3px solid #007bff
+    }
+
+    th a:hover {
+      text-decoration: underline;
+      /* nebo jinak zvýrazníš hover */
+      color: inherit;
+      /* zachová barvu */
+    }
+
+
+    .priority-0 {
+      color: green;
+      font-weight: bold;
+    }
+
+    .priority-1 {
+      color: orange;
+      font-weight: bold;
+    }
+
+    .priority-2 {
+      color: red;
+      font-weight: bold;
+    }
+
+    button {
+      display: block;
+      width: 70%;
+      padding: 7px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button.delete {
+      background-color: #eb1d1dff;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .bottomButtons {
+      display: flex;
+      justify-content: flex-end;
+      /* tlačítka zarovnáme doprava */
+      gap: 10px;
+      /* mezera mezi tlačítky */
+      margin-top: 20px;
+    }
+
+    .bottomButtons button {
+      width: auto;
+      /* necháme přirozenou šířku */
+      padding: 7px 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <h1>Prefaby úkolů</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Jméno</th>
+          <th>Popis</th>
+          <th>Vytvořeno</th>
+          <th>Priority</th>
+          <th>Cron</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% taskPrefabs.forEach(function(task) { %>
+        <tr>
+          <td>
+            <button type="button" class="delete" onclick="window.location='/<%= user %>/<%= task.id %>/prefabRemoved'">
+              ✖
+            </button>
+          </td>
+          <td><%= task.name %></td>
+          <td><%= task.description %></td>
+          <td><%= new Date(task.created_at).toLocaleDateString() %></td>
+          <td class="priority-<%= task.priority %>">
+            <%= task.priority == "0" ? "Minoritní" : task.priority == "1" ? "Standardní" : "Kritická" %>
+          </td>
+          <td><%= task.cron %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="bottomButtons">
+      <button type="button" onclick="window.location='/<%= user %>/newPrefabForm'">+</button>
+    </div>
+  </div>
+
+</body>
+
+</html>

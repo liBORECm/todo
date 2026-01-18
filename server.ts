@@ -110,6 +110,64 @@ app.get("/:user/:id/done", async (req, res) => {
   res.redirect(`/${req.params.user}`)
 })
 
+/**
+ * Shows table of prefabtasks
+ */
+app.get("/:user/prefabTable", async (req, res) => {
+  const taskPrefabs = await db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")
+  const user = req.params.user
+
+  res.render("prefabTaskTable.ejs", { taskPrefabs, user })
+})
+
+/**
+ * Renders form for new standard task
+ */
+app.get("/:user/newPrefabForm", async (req, res) => {
+  /* const user = req.params.user
+
+  res.render("newPrefabTaskForm.ejs", { user: user })
+ */})
+
+/**
+ * Is redirected from new prefab task form, creates task and redirects
+ * back to prefab dashboard
+ */
+app.post("/:user/newPrefab", async (req, res) => {
+  /* const user = req.params.user
+  if (!users.includes(user))
+    return res.status(500).json({ error: "unknown user" })
+
+  const name = req.body.name
+  const description = req.body.description
+  const deadline = req.body.deadline === "" ? null : req.body.deadline
+  const priority = req.body.priority
+
+  await db("tasks").insert({
+    name,
+    user,
+    description,
+    deadline,
+    priority,
+  })
+
+  res.redirect(`/${user}`) */
+})
+
+/**
+ * Is redirected from prefab tasks dashboard, deletes prefab task and redirects
+ * back to dashboard
+ */
+app.get("/:user/:id/prefabRemoved", async (req, res) => {
+  /* await db("tasks")
+    .select("*")
+    .where("id", req.params.id)
+    .update("finished_at", db.fn.now())
+
+  res.redirect(`/${req.params.user}`) */
+})
+
+
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
   console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
 )
