@@ -119,13 +119,43 @@
       /* necháme přirozenou šířku */
       padding: 7px 15px;
     }
+
+    .header-with-button {
+      display: flex;
+      align-items: center;   /* vertikálně vycentruje */
+      justify-content: center; /* centrální nadpis */
+      position: relative;    /* pro absolutní tlačítko */
+      margin-bottom: 30px;   /* nebo podle potřeby */
+    }
+
+    .header-with-button h1 {
+      margin: 0;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .back-button {
+      position: absolute;
+      width: 40px;
+      left: 0;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
+      background-color: #007bff
+    }
+
   </style>
 </head>
 
 <body>
 
   <div class="wrapper">
-    <h1>Prefaby úkolů</h1>
+    <div class="header-with-button">
+      <h1>Prefaby úkolů</h1>
+      <button class="back-button" onclick="window.location='/<%= user %>'">🢨</button>
+    </div>
 
     <table>
       <thead>
@@ -135,7 +165,7 @@
           <th>Popis</th>
           <th>Vytvořeno</th>
           <th>Priority</th>
-          <th>Cron</th>
+          <th><a href="https://crontab.guru/" target="_blank">Cron</a></th>
         </tr>
       </thead>
       <tbody>

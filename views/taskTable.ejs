@@ -12,6 +12,8 @@
       padding: 40px;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+      align-items: center;      
     }
 
     .wrapper {
@@ -21,6 +23,7 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
       min-width: 600px;
       text-align: center;
+      margin-bottom: 60px;
     }
 
     h1 {
@@ -180,11 +183,57 @@
 
     <div class="bottomButtons">
       <button type="button" onclick="window.location='/<%= user %>/newForm'">+</button>
-
+      <button type="button" onclick="window.location='/<%= user %>/prefabTable'">Vzor opakovaných tasků</button>
       <button type="button" onclick="window.location='/<%= user %>?sort=<%=sort%>&order=<%=order%>&hide_finished=<%= hideFinished === 'false' ? true : false %>'"><%= hideFinished === "false" ? "Skryj hotové" : "Ukaž hotové"%></button>
     </div>
   </div>
 
+  <div class="wrapper">
+    <h1>Seznam opakovaných úkolů</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Jméno</th>
+          <th>Popis</th>
+
+          <th>
+              Priority
+              <% if(sort === "priority") { %>
+              <%= order === "desc" ? "⇧" : "⇩" %>
+              <% } %>
+          </th>
+          <% if(hideFinished === "false") { %>
+          <th>Dokončeno</th>
+          <% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% clones.forEach(function(clone) { %>
+        <tr>
+          <td>
+            <button type="button" onclick="window.location='/<%= user %>/<%= clone.id %>/cloneDone'">
+              ✓
+            </button>
+          </td>
+          <td><%= clone.name %></td>
+          <td><%= clone.description %></td>
+          <td class="priority-<%= clone.priority %>">
+            <%= clone.priority == "0" ? "Minoritní" : clone.priority == "1" ? "Standardní" : "Kritická" %>
+          </td>
+          <% if(hideFinished === "false") { %>
+          <td><%= clone.finished_at && clone.finished_at !== "0000-00-00 00:00:00" ? new Date(clone.finished_at).toLocaleDateString() : "-" %></td>
+          <% } %>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="bottomButtons">
+      <button type="button" onclick="window.location='/<%= user %>/prefabTable'">Vzor opakovaných tasků</button>
+    </div>
+  </div>
 </body>
 
 </html>

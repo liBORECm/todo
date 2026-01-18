@@ -33,38 +33,53 @@ app.get("/:user", async (req, res) => {
       : "id"
   const order = req.query.order === "desc" ? "desc" : "asc"
   const hideFinished = req.query.hide_finished
+  
+const todayLocalDate = new Date()
+todayLocalDate.setHours(0, 0, 0, 0)
 
-  let tasksQuery
+
+  let tasksQuery = db("tasks")
+      .where("user", user)
+  let clonesQuery
 
   if (sort === "priority")
-    tasksQuery = db("tasks")
-      .select("*")
-      .where("user", user)
+{    tasksQuery
       .orderBy("priority", order)
       .orderByRaw("deadline IS NULL ASC")
       .orderBy("deadline", order)
-
       .orderBy("id", order)
+    
+      clonesQuery = db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("priority", order)
+      .orderBy("id", order)
+    }
   else if (sort === "deadline")
-    tasksQuery = db("tasks")
-      .select("*")
-      .where("user", user)
+{    tasksQuery
       .orderByRaw("deadline IS NULL ASC")
       .orderBy("deadline", order)
 
       .orderBy("priority", order)
       .orderBy("id", order)
-  else
-    tasksQuery = db("tasks")
-      .select("*")
-      .where("user", user)
+    
+      clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("priority", order)
       .orderBy("id", order)
+    }
+  else
+{    tasksQuery.orderBy("id", order)
+      clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("id", order)}
 
   if (hideFinished === "false") {
-  } else tasksQuery.whereNull("finished_at").orWhere("finished_at", "")
+  } else {tasksQuery.where("finished_at", "")
+    clonesQuery.where("finished_at", "")}
 
   const tasks = await tasksQuery
-  res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user })
+  const clones = await clonesQuery
+
+  console.log(clones, null, 2)
+
+  res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user, clones })
 })
 
 /**
