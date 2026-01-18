@@ -17,8 +17,8 @@ export async function up(knex) {
     .notNullable()
     .references("id")
     .inTable("tasks_prefab")
-    table.timestamp("scheduled_at").defaultTo(knex.fn.now())
-    table.timestamp("finished_at")
+    table.timestamp("scheduled_at").notNullable().defaultTo(knex.fn.now())
+    table.timestamp("finished_at").defaultTo(null)
     table.unique(["prefab_id", "scheduled_at"])
   })
 }
