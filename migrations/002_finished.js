@@ -1,10 +1,10 @@
-export async function up(knex) {
+exports.up = async function(knex) {
   return knex.schema.alterTable("tasks", (table) => {
     table.timestamp("finished_at")
   })
 }
 
-export async function down(knex) {
+exports.down = async function(knex) {
   return knex.schema.alterTable("tasks", (table) => {
     table.dropColumn("finished_at")
   })

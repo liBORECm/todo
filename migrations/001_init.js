@@ -1,4 +1,4 @@
-export async function up(knex) {
+exports.up = async function(knex) {
   await knex.raw(
     `ALTER DATABASE todo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
   )
@@ -14,6 +14,6 @@ export async function up(knex) {
   })
 }
 
-export async function down(knex) {
+exports.down = async function(knex) {
   return knex.schema.dropTableIfExists("tasks")
 }
