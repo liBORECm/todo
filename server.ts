@@ -4,7 +4,8 @@ import cors from "cors"
 import { db } from "./db"
 import { isValidCron } from "cron-validator"
 import { CronExpressionParser } from "cron-parser"
-import cron from 'node-cron';
+import cron from 'node-cron'
+import { logService } from "./logService"
 
 
 dotenv.config({ quiet: true })
@@ -24,6 +25,7 @@ app.get("/", async (req, res) => {
  */
 app.get("/:user", async (req, res) => {
   const user = req.params.user
+  if(!users.includes(user)) return
 
   const sort =
     req.query.sort === "priority"
@@ -77,7 +79,8 @@ todayLocalDate.setHours(0, 0, 0, 0)
   const tasks = await tasksQuery
   const clones = await clonesQuery
 
-  console.log(clones, null, 2)
+  logService(`GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${tasks.length}`, `${tasksQuery}, ${tasks}`)
+  logService(`GETTING CLONED TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${clones.length}`, `${clonesQuery}, ${clones}`)
 
   res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user, clones })
 })
@@ -105,6 +108,20 @@ app.post("/:user/new", async (req, res) => {
   const deadline = req.body.deadline === "" ? null : req.body.deadline
   const priority = req.body.priority
 
+  logService(`INSERTING NEW STANDARD TASK FOR USER ${user}`, `${{
+    name,
+    user,
+    description,
+    deadline,
+    priority,
+  }}`, `${{
+    name,
+    user,
+    description,
+    deadline,
+    priority,
+  }}`)
+
   await db("tasks").insert({
     name,
     user,
@@ -125,6 +142,8 @@ app.get("/:user/:id/done", async (req, res) => {
     .select("*")
     .where("id", req.params.id)
     .update("finished_at", db.fn.now())
+  
+  logService(`FINISHING STANDARD TASK WITH ID ${req.params.id}`, ``, ``)
 
   res.redirect(`/${req.params.user}`)
 })
@@ -135,6 +154,8 @@ app.get("/:user/:id/done", async (req, res) => {
 app.get("/:user/prefabTable", async (req, res) => {
   const taskPrefabs = await db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")
   const user = req.params.user
+
+  logService(`GETTING ALL PREFABS FOR USER ${user}`, `${taskPrefabs.length}`, `${db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")}, ${taskPrefabs}`)
 
   res.render("prefabTaskTable.ejs", { taskPrefabs, user })
 })
@@ -171,6 +192,20 @@ app.post("/:user/newPrefab", async (req, res) => {
     )
   }
 
+  logService(`INSERTING NEW PREFAB FOR USER ${user}`, `${{
+    name,
+    user,
+    description,
+    priority,
+    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
+  }}`, `${{
+    name,
+    user,
+    description,
+    priority,
+    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
+  }}`)
+
   await db("tasks_prefab").insert({
     name,
     user,
@@ -191,6 +226,8 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
     .where("id", req.params.id)
     .update("deleted_at", db.fn.now())
 
+  logService(`DELETING PREFAB WITH ID ${req.params.id}`, ``, ``)
+
   res.redirect(`/${req.params.user}/prefabTable`)
 })
 
@@ -206,6 +243,8 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
   .where("prefab_id", id)
   .andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate])
   .update("finished_at", db.fn.now())
+
+  logService(`FINISHING CLONE WITH ID ${id}`, ``, ``)
 
   res.redirect(`/${req.params.user}`)
 })
@@ -226,16 +265,13 @@ async function clonePrefabs() {
     }).prev()
       .toDate()
     
-    console.log(prefab, null, 2)
-    console.log(cronPrev, startOfToday, now)
-    
     return (
       cronPrev >= startOfToday &&
       cronPrev <= now
     )
   })
 
-  console.log(JSON.stringify(prefabsFiltered, null, 2))
+  logService(`PREFABS TO BE CLONED`, `${prefabsFiltered.length}`, `${prefabsFiltered}`)
 
   for (let i = 0; i < prefabsFiltered.length; i++) {
     const prefab = prefabsFiltered[i];
@@ -252,5 +288,6 @@ cron.schedule("10 0 * * *", clonePrefabs,   {
   })
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
-  console.log(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`)
+  logService(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`, ``, ``)
 )
+
