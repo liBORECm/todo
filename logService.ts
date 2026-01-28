@@ -8,15 +8,16 @@ export const logService = (
   res: string,
   resEnrcihed: string
 ) => {
-  console.log(logFile, logFile && existsSync(logFile))
   const timestamp = (new Date()).toString()
+
+  /*   console.log(logFile, logFile && existsSync(logFile))
   if(logFile && existsSync(logFile)) {
     writeFileSync(logFile, `[${timestamp}]\n${decs}\n${JSON.stringify(res)}\n`, { flag: "a" })
   }
 
   if(logFileEnrcihed && existsSync(logFileEnrcihed)) {
     writeFileSync(logFileEnrcihed, `[${timestamp}]\n${decs}\n${JSON.stringify(resEnrcihed)}\n`, { flag: "a" })
-  }
+  }*/
 
-  console.log(`[${timestamp}]\n${decs}\n${JSON.stringify(res)}\n`)
+  console.log(`[${timestamp}]\n${decs}\n${JSON.stringify(resEnrcihed)}\n`)
 }
