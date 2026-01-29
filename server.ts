@@ -73,8 +73,8 @@ todayLocalDate.setHours(0, 0, 0, 0)
       .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("id", order)}
 
   if (hideFinished === "false") {
-  } else {tasksQuery.where("finished_at", "")
-    clonesQuery.where("finished_at", "")}
+  } else {tasksQuery.whereNull("finished_at")
+    clonesQuery.whereNull("finished_at")}
 
   const tasks = await tasksQuery
   const clones = await clonesQuery
