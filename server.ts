@@ -311,7 +311,7 @@ async function clonePrefabs() {
 
 }
 
-cron.schedule("25 0 * * *", clonePrefabs,   {
+cron.schedule("35 0 * * *", clonePrefabs,   {
     timezone: "Europe/Prague"
   })
 
