@@ -279,7 +279,7 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
 async function clonePrefabs() {
   //this function runs at around 00:10 every day
   console.log("running clonePreafbs()! ")
-  const startOfToday = new Date()
+  const startOfToday = pragueStartOfToday()
   const now = new Date()
 
 
@@ -311,7 +311,7 @@ async function clonePrefabs() {
 
 }
 
-cron.schedule("50 0 * * *", clonePrefabs,   {
+cron.schedule("55 0 * * *", clonePrefabs,   {
     timezone: "Europe/Prague"
   })
 
