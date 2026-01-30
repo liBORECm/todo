@@ -223,7 +223,7 @@
           <td class="priority-<%= clone.priority %>">
             <%= clone.priority == "0" ? "Minoritní" : clone.priority == "1" ? "Standardní" : "Kritická" %>
           </td>
-          <td><%= clone.deadline %></td>
+          <td><%= clone.deadline && clone.deadline !== "0000-00-00 00:00:00" ? new Date(clone.deadline).toLocaleDateString() : "-" %></td>
           <% if(hideFinished === "false") { %>
           <td><%= clone.finished_at && clone.finished_at !== "0000-00-00 00:00:00" ? new Date(clone.finished_at).toLocaleDateString() : "-" %></td>
           <% } %>
