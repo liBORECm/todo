@@ -283,6 +283,7 @@ async function clonePrefabs() {
 
 
   const prefabs = await db("tasks_prefab").whereNull("deleted_at")
+  console.log(startOfToday, now, prefabs.length)
   const prefabsFiltered = prefabs.filter((prefab) => {
     const cronPrev = CronExpressionParser.parse(prefab.cron, {
       currentDate: now,
