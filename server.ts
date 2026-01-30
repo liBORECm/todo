@@ -276,9 +276,9 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
 async function clonePrefabs() {
   //this function runs at around 00:10 every day
   console.log("running clonePreafbs()! ")
-  const now = new Date()
+  const startOfToday = new Date(pragueStartOfToday().getDate() + 1)
+  const now = new Date((new Date()).getDate() + 1)
 
-  const startOfToday = pragueStartOfToday()
 
   const prefabs = await db("tasks_prefab").whereNull("deleted_at")
   const prefabsFiltered = prefabs.filter((prefab) => {
@@ -306,7 +306,7 @@ async function clonePrefabs() {
 
 }
 
-cron.schedule("10 0 * * *", clonePrefabs,   {
+cron.schedule("20 0 * * *", clonePrefabs,   {
     timezone: "Europe/Prague"
   })
 
