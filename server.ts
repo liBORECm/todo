@@ -6,6 +6,7 @@ import { isValidCron } from "cron-validator"
 import { CronExpressionParser } from "cron-parser"
 import cron from 'node-cron'
 import { logService } from "./logService"
+import { pragueStartOfToday } from "./common"
 
 
 dotenv.config({ quiet: true })
@@ -36,8 +37,7 @@ app.get("/:user", async (req, res) => {
   const order = req.query.order === "desc" ? "desc" : "asc"
   const hideFinished = req.query.hide_finished
   
-const todayLocalDate = new Date()
-todayLocalDate.setHours(0, 0, 0, 0)
+const todayLocalDate = pragueStartOfToday()
 
 
   let tasksQuery = db("tasks")
@@ -52,7 +52,14 @@ todayLocalDate.setHours(0, 0, 0, 0)
       .orderBy("id", order)
     
       clonesQuery = db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("priority", order)
+      .where("user", user).whereRaw(`
+    ? BETWEEN
+      DATE(tasks_clone.scheduled_at)
+      AND DATE_ADD(
+        DATE(tasks_clone.scheduled_at),
+        INTERVAL tasks_prefab.days DAY
+      )
+  `, [todayLocalDate]).orderBy("priority", order)
       .orderBy("id", order)
     }
   else if (sort === "deadline")
@@ -64,13 +71,27 @@ todayLocalDate.setHours(0, 0, 0, 0)
       .orderBy("id", order)
     
       clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("priority", order)
+      .where("user", user).whereRaw(`
+    ? BETWEEN
+      DATE(tasks_clone.scheduled_at)
+      AND DATE_ADD(
+        DATE(tasks_clone.scheduled_at),
+        INTERVAL tasks_prefab.days DAY
+      )
+  `, [todayLocalDate]).orderBy("priority", order)
       .orderBy("id", order)
     }
   else
 {    tasksQuery.orderBy("id", order)
       clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate]).orderBy("id", order)}
+      .where("user", user).whereRaw(`
+    ? BETWEEN
+      DATE(tasks_clone.scheduled_at)
+      AND DATE_ADD(
+        DATE(tasks_clone.scheduled_at),
+        INTERVAL tasks_prefab.days DAY
+      )
+  `, [todayLocalDate]).orderBy("id", order)}
 
   if (hideFinished === "false") {
   } else {tasksQuery.whereNull("finished_at")
@@ -250,12 +271,11 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
 })
 
 async function clonePrefabs() {
-  //this function runs at around 00:30 every day
+  //this function runs at around 00:10 every day
   console.log("running clonePreafbs()! ")
-  const now = new Date();
+  const now = new Date()
 
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
+  const startOfToday = pragueStartOfToday()
 
   const prefabs = await db("tasks_prefab").whereNull("deleted_at")
   const prefabsFiltered = prefabs.filter((prefab) => {
