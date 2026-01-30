@@ -99,6 +99,9 @@ const todayLocalDate = pragueStartOfToday()
 
   const tasks = await tasksQuery
   const clones = await clonesQuery
+  for(const clone of clones) {
+    clone.deadline = new Date(todayLocalDate.getDate() + clone.days || 1)
+  }
 
   logService(`GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${tasks.length}`, `${tasksQuery}, ${tasks}`)
   logService(`GETTING CLONED TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${clones.length}`, `${clonesQuery}, ${clones}`)
