@@ -100,8 +100,13 @@ const todayLocalDate = pragueStartOfToday()
   const tasks = await tasksQuery
   const clones = await clonesQuery
   for(const clone of clones) {
-    clone.deadline = new Date()
-    clone.deadline.setDate(todayLocalDate.getDate() + clone.days || 1)
+    const now = new Date()
+    const cronPrev = CronExpressionParser.parse(clone.cron, {
+      currentDate: now,
+      tz: "Europe/Prague"
+    }).prev()
+    clone.deadline = now
+    clone.deadline.setDate(cronPrev.getDate() + clone.days || 1)
   }
 
   logService(`GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${tasks.length}`, `${tasksQuery}, ${tasks}`)
@@ -311,11 +316,11 @@ async function clonePrefabs() {
 
 }
 
-cron.schedule("55 0 * * *", clonePrefabs,   {
+cron.schedule("10 0 * * *", clonePrefabs,   {
     timezone: "Europe/Prague"
   })
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
-  logService(`Budget BE alive on ${process.env.API_URL}:${process.env.PORT}`, ``, ``)
+  logService(`TODO APP alive on ${process.env.API_URL}:${process.env.PORT}`, ``, ``)
 )
 
