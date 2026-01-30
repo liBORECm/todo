@@ -290,7 +290,9 @@ async function clonePrefabs() {
       tz: "Europe/Prague"
     }).prev()
       .toDate()
-    
+  
+      console.log(prefab.name, prefab.cron, cronPrev, startOfToday, now)
+
     return (
       cronPrev >= startOfToday &&
       cronPrev <= now
@@ -309,7 +311,7 @@ async function clonePrefabs() {
 
 }
 
-cron.schedule("45 0 * * *", clonePrefabs,   {
+cron.schedule("50 0 * * *", clonePrefabs,   {
     timezone: "Europe/Prague"
   })
 
