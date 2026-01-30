@@ -209,6 +209,7 @@ app.post("/:user/newPrefab", async (req, res) => {
   const cronMonth = req.body.cron_month
   const cronDayOfWeek = req.body.cron_day_of_week
   const priority = req.body.priority
+  const days = req.body.days
 
   if (!isValidCron(`0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`)) {
     res.redirect(
@@ -235,7 +236,8 @@ app.post("/:user/newPrefab", async (req, res) => {
     user,
     description,
     priority,
-    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
+    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`,
+    days
   })
 
   res.redirect(`/${user}/prefabTable`)
