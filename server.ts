@@ -101,12 +101,8 @@ const todayLocalDate = pragueStartOfToday()
   const clones = await clonesQuery
   for(const clone of clones) {
     const now = new Date()
-    const cronPrev = CronExpressionParser.parse(clone.cron, {
-      currentDate: now,
-      tz: "Europe/Prague"
-    }).prev()
     clone.deadline = now
-    clone.deadline.setDate(cronPrev.getDate() + clone.days || 1)
+    clone.deadline.setDate(clone.scheduled_at.getDate() + clone.days || 1)
   }
 
   logService(`GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${tasks.length}`, `${tasksQuery}, ${tasks}`)
