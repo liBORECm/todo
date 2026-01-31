@@ -266,14 +266,12 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
 /**
  * Is redirected from task dashboard, updates task clone and redirects back
  */
-app.get("/:user/:id/cloneDone", async (req, res) => { 
-  const todayLocalDate = new Date()
-  todayLocalDate.setHours(0, 0, 0, 0)
-  
+app.get("/:user/:id/:scheduled_at/cloneDone", async (req, res) => { 
   const id = req.params.id
+  const scheduled_at = req.params.scheduled_at
   await db("tasks_clone")
   .where("prefab_id", id)
-  .andWhereRaw("DATE(scheduled_at) = ?", [todayLocalDate])
+  .andWhereRaw("DATE(scheduled_at) = ?", [scheduled_at])
   .update("finished_at", db.fn.now())
 
   logService(`FINISHING CLONE WITH ID ${id}`, ``, ``)

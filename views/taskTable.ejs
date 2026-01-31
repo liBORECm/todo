@@ -214,7 +214,7 @@
         <% clones.forEach(function(clone) { %>
         <tr>
           <td>
-            <button type="button" onclick="window.location='/<%= user %>/<%= clone.id %>/cloneDone'">
+            <button type="button" onclick="window.location='/<%= user %>/<%= clone.id %>/<%= clone.scheduled_at %>/cloneDone'">
               ✓
             </button>
           </td>
