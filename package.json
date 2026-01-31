@@ -8,7 +8,8 @@
     "dev": "tsx --watch server.ts",
     "db:setup": "knex migrate:latest --env development",
     "db:rollback": "knex migrate:rollback --env development",
-    "db:reset": "knex migrate:rollback --all && knex migrate:latest --env development"
+    "db:reset": "knex migrate:rollback --all && knex migrate:latest --env development",
+    "db:rollback-one": "knex migrate:rollback --env development --step 1"
   },
   "keywords": [],
   "author": "",
