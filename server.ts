@@ -4,17 +4,16 @@ import cors from "cors"
 import { db } from "./db"
 import { isValidCron } from "cron-validator"
 import { CronExpressionParser } from "cron-parser"
-import cron from 'node-cron'
+import cron from "node-cron"
 import { logService } from "./logService"
 import { pragueStartOfToday } from "./common"
-
 
 dotenv.config({ quiet: true })
 const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
-
+//test comment
 const users = ["Libor", "Leona", "Společný"]
 
 app.get("/", async (req, res) => {
@@ -26,89 +25,121 @@ app.get("/", async (req, res) => {
  */
 app.get("/:user", async (req, res) => {
   const user = req.params.user
-  if(!users.includes(user)) return
+  if (!users.includes(user)) return
 
   const sort =
     req.query.sort === "priority"
       ? "priority"
       : req.query.sort === "deadline"
-      ? "deadline"
-      : "id"
+        ? "deadline"
+        : "id"
   const order = req.query.order === "desc" ? "desc" : "asc"
   const hideFinished = req.query.hide_finished
-  
-const todayLocalDate = pragueStartOfToday()
 
+  const todayLocalDate = pragueStartOfToday()
 
-  let tasksQuery = db("tasks")
-      .where("user", user)
+  let tasksQuery = db("tasks").where("user", user)
   let clonesQuery
 
-  if (sort === "priority")
-{    tasksQuery
+  if (sort === "priority") {
+    tasksQuery
       .orderBy("priority", order)
       .orderByRaw("deadline IS NULL ASC")
       .orderBy("deadline", order)
       .orderBy("id", order)
-    
-      clonesQuery = db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).whereRaw(`
+
+    clonesQuery = db("tasks_clone")
+      .join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user)
+      .whereRaw(
+        `
     ? BETWEEN
       DATE(tasks_clone.scheduled_at)
       AND DATE_ADD(
         DATE(tasks_clone.scheduled_at),
         INTERVAL tasks_prefab.days DAY
       )
-  `, [todayLocalDate]).orderBy("priority", order)
+  `,
+        [todayLocalDate],
+      )
+      .orderBy("priority", order)
       .orderBy("id", order)
-    }
-  else if (sort === "deadline")
-{    tasksQuery
+  } else if (sort === "deadline") {
+    tasksQuery
       .orderByRaw("deadline IS NULL ASC")
       .orderBy("deadline", order)
 
       .orderBy("priority", order)
       .orderBy("id", order)
-    
-      clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).whereRaw(`
+
+    clonesQuery = db("tasks_clone")
+      .join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user)
+      .whereRaw(
+        `
     ? BETWEEN
       DATE(tasks_clone.scheduled_at)
       AND DATE_ADD(
         DATE(tasks_clone.scheduled_at),
         INTERVAL tasks_prefab.days DAY
       )
-  `, [todayLocalDate]).orderBy("priority", order)
+  `,
+        [todayLocalDate],
+      )
+      .orderBy("priority", order)
       .orderBy("id", order)
-    }
-  else
-{    tasksQuery.orderBy("id", order)
-      clonesQuery=db("tasks_clone").join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
-      .where("user", user).whereRaw(`
+  } else {
+    tasksQuery.orderBy("id", order)
+    clonesQuery = db("tasks_clone")
+      .join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user)
+      .whereRaw(
+        `
     ? BETWEEN
       DATE(tasks_clone.scheduled_at)
       AND DATE_ADD(
         DATE(tasks_clone.scheduled_at),
         INTERVAL tasks_prefab.days DAY
       )
-  `, [todayLocalDate]).orderBy("id", order)}
+  `,
+        [todayLocalDate],
+      )
+      .orderBy("id", order)
+  }
 
   if (hideFinished === "false") {
-  } else {tasksQuery.whereNull("finished_at")
-    clonesQuery.whereNull("finished_at")}
+  } else {
+    tasksQuery.whereNull("finished_at")
+    clonesQuery.whereNull("finished_at")
+  }
 
   const tasks = await tasksQuery
   const clones = await clonesQuery
-  for(const clone of clones) {
+  for (const clone of clones) {
     const now = new Date()
     clone.deadline = now
     clone.deadline.setDate(clone.scheduled_at.getDate() + clone.days || 1)
   }
 
-  logService(`GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${tasks.length}`, `${tasksQuery}, ${tasks}`)
-  logService(`GETTING CLONED TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`, `${clones.length}`, `${clonesQuery}, ${clones}`)
+  logService(
+    `GETTING STANDARD TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`,
+    `${tasks.length}`,
+    `${tasksQuery}, ${tasks}`,
+  )
+  logService(
+    `GETTING CLONED TASK FOR USER ${user}, HIDING FINISHED: ${hideFinished}`,
+    `${clones.length}`,
+    `${clonesQuery}, ${clones}`,
+  )
 
-  res.render("taskTable.ejs", { tasks, hideFinished, sort, order, user, clones })
+  res.render("taskTable.ejs", {
+    tasks,
+    hideFinished,
+    sort,
+    order,
+    user,
+    clones,
+  })
 })
 
 /**
@@ -134,19 +165,23 @@ app.post("/:user/new", async (req, res) => {
   const deadline = req.body.deadline === "" ? null : req.body.deadline
   const priority = req.body.priority
 
-  logService(`INSERTING NEW STANDARD TASK FOR USER ${user}`, `${{
-    name,
-    user,
-    description,
-    deadline,
-    priority,
-  }}`, `${{
-    name,
-    user,
-    description,
-    deadline,
-    priority,
-  }}`)
+  logService(
+    `INSERTING NEW STANDARD TASK FOR USER ${user}`,
+    `${{
+      name,
+      user,
+      description,
+      deadline,
+      priority,
+    }}`,
+    `${{
+      name,
+      user,
+      description,
+      deadline,
+      priority,
+    }}`,
+  )
 
   await db("tasks").insert({
     name,
@@ -168,7 +203,7 @@ app.get("/:user/:id/done", async (req, res) => {
     .select("*")
     .where("id", req.params.id)
     .update("finished_at", db.fn.now())
-  
+
   logService(`FINISHING STANDARD TASK WITH ID ${req.params.id}`, ``, ``)
 
   res.redirect(`/${req.params.user}`)
@@ -178,10 +213,16 @@ app.get("/:user/:id/done", async (req, res) => {
  * Shows table of prefabtasks
  */
 app.get("/:user/prefabTable", async (req, res) => {
-  const taskPrefabs = await db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")
+  const taskPrefabs = await db("tasks_prefab")
+    .where("user", req.params.user)
+    .whereNull("deleted_at")
   const user = req.params.user
 
-  logService(`GETTING ALL PREFABS FOR USER ${user}`, `${taskPrefabs.length}`, `${db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")}, ${taskPrefabs}`)
+  logService(
+    `GETTING ALL PREFABS FOR USER ${user}`,
+    `${taskPrefabs.length}`,
+    `${db("tasks_prefab").where("user", req.params.user).whereNull("deleted_at")}, ${taskPrefabs}`,
+  )
 
   res.render("prefabTaskTable.ejs", { taskPrefabs, user })
 })
@@ -215,23 +256,27 @@ app.post("/:user/newPrefab", async (req, res) => {
 
   if (!isValidCron(`0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`)) {
     res.redirect(
-      `/${user}/newPrefabForm?invalid_cron=${cronDayOfMonth}_${cronMonth}_${cronDayOfWeek}`
+      `/${user}/newPrefabForm?invalid_cron=${cronDayOfMonth}_${cronMonth}_${cronDayOfWeek}`,
     )
   }
 
-  logService(`INSERTING NEW PREFAB FOR USER ${user}`, `${{
-    name,
-    user,
-    description,
-    priority,
-    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
-  }}`, `${{
-    name,
-    user,
-    description,
-    priority,
-    cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`
-  }}`)
+  logService(
+    `INSERTING NEW PREFAB FOR USER ${user}`,
+    `${{
+      name,
+      user,
+      description,
+      priority,
+      cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`,
+    }}`,
+    `${{
+      name,
+      user,
+      description,
+      priority,
+      cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`,
+    }}`,
+  )
 
   await db("tasks_prefab").insert({
     name,
@@ -239,7 +284,7 @@ app.post("/:user/newPrefab", async (req, res) => {
     description,
     priority,
     cron: `0 0 ${cronDayOfMonth} ${cronMonth} ${cronDayOfWeek}`,
-    days
+    days,
   })
 
   res.redirect(`/${user}/prefabTable`)
@@ -262,11 +307,11 @@ app.get("/:user/:id/prefabRemoved", async (req, res) => {
 /**
  * Is redirected from task dashboard, updates task clone and redirects back
  */
-app.get("/:user/:id/cloneDone", async (req, res) => { 
+app.get("/:user/:id/cloneDone", async (req, res) => {
   const id = req.params.id
   await db("tasks_clone")
-  .where("clone_id", id)
-  .update("finished_at", db.fn.now())
+    .where("clone_id", id)
+    .update("finished_at", db.fn.now())
 
   logService(`FINISHING CLONE WITH ID ${id}`, ``, ``)
 
@@ -279,40 +324,43 @@ async function clonePrefabs() {
   const startOfToday = pragueStartOfToday()
   const now = new Date()
 
-
   const prefabs = await db("tasks_prefab").whereNull("deleted_at")
   const prefabsFiltered = prefabs.filter((prefab) => {
     const cronPrev = CronExpressionParser.parse(prefab.cron, {
       currentDate: now,
-      tz: "Europe/Prague"
-    }).prev()
+      tz: "Europe/Prague",
+    })
+      .prev()
       .toDate()
-  
-      console.log(prefab.name, prefab.cron, cronPrev, startOfToday, now)
 
-    return (
-      cronPrev >= startOfToday &&
-      cronPrev <= now
-    )
+    console.log(prefab.name, prefab.cron, cronPrev, startOfToday, now)
+
+    return cronPrev >= startOfToday && cronPrev <= now
   })
 
-  logService(`PREFABS TO BE CLONED`, `${prefabsFiltered.length}`, `${prefabsFiltered}`)
+  logService(
+    `PREFABS TO BE CLONED`,
+    `${prefabsFiltered.length}`,
+    `${prefabsFiltered}`,
+  )
 
   for (let i = 0; i < prefabsFiltered.length; i++) {
-    const prefab = prefabsFiltered[i];
+    const prefab = prefabsFiltered[i]
     await db("tasks_clone").insert({
       prefab_id: prefab.id,
-      scheduled_at: startOfToday
+      scheduled_at: startOfToday,
     })
   }
-
 }
 
-cron.schedule("10 0 * * *", clonePrefabs,   {
-    timezone: "Europe/Prague"
-  })
+cron.schedule("10 0 * * *", clonePrefabs, {
+  timezone: "Europe/Prague",
+})
 
 app.listen(Number(process.env.PORT!), "0.0.0.0", () =>
-  logService(`TODO APP alive on ${process.env.API_URL}:${process.env.PORT}`, ``, ``)
+  logService(
+    `TODO APP alive on ${process.env.API_URL}:${process.env.PORT}`,
+    ``,
+    ``,
+  ),
 )
-
