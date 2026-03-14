@@ -21,6 +21,19 @@ app.get("/", async (req, res) => {
 })
 
 /**
+ * Test routes
+ */
+app.get("/clonetest", async (req, res) => {
+  await clonePrefabs()
+  res.redirect("/")
+})
+
+app.get("/notifytest", async (req, res) => {
+  await notifyAboutClones()
+  res.redirect("/")
+})
+
+/**
  * Renders dashboard
  */
 app.get("/:user", async (req, res) => {
@@ -388,16 +401,17 @@ async function notifyAboutClones() {
 
     if(clones.length === 0) continue
 
-    await fetch(`http://10.10.10.1:5542/todo-list-${user}`), {
+
+    console.log(`Sending notification to ${user}, with tasks: ${JSON.stringify(clones, null, 2)}`)
+    await fetch(`http://10.10.10.1:5542/todo-list-${user}`, {
       method: 'POST',
       headers: {
-        'Title': 'Úkoly na dnešek',
-        'Priority': 'high',
+        'Title': "Tasks for today",
         'Tags': 'warning',
         'Click': `http://10.10.10.1:5533/${user}`
       },
       body: clones.map((task) => ` - ${task.name}`).join("\n")
-    }
+    })
   }
 }
 
