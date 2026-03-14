@@ -353,7 +353,59 @@ async function clonePrefabs() {
   }
 }
 
+async function notifyAboutClones() {
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i]
+    if (!users.includes(user)) return
+
+    const todayLocalDate = pragueStartOfToday()
+
+    let clonesQuery
+
+    clonesQuery = db("tasks_clone")
+      .join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user)
+      .whereRaw(
+        `
+      ? BETWEEN
+        DATE(tasks_clone.scheduled_at)
+        AND DATE_ADD(
+          DATE(tasks_clone.scheduled_at),
+          INTERVAL tasks_prefab.days DAY
+        )
+    `,
+        [todayLocalDate],
+      )
+
+    clonesQuery.whereNull("finished_at")
+
+    const clones = await clonesQuery
+    for (const clone of clones) {
+      const now = new Date()
+      clone.deadline = now
+      clone.deadline.setDate(clone.scheduled_at.getDate() + clone.days || 1)
+    }
+
+    if(clones.length === 0) continue
+
+    await fetch(`http://10.10.10.1:5542/todo-list-${user}`), {
+      method: 'POST',
+      headers: {
+        'Title': 'Úkoly na dnešek',
+        'Priority': 'high',
+        'Tags': 'warning',
+        'Click': `http://10.10.10.1:5533/${user}`
+      },
+      body: clones.map((task) => ` - ${task.name}`).join("\n")
+    }
+  }
+}
+
 cron.schedule("10 0 * * *", clonePrefabs, {
+  timezone: "Europe/Prague",
+})
+
+cron.schedule("0 8 * * *", notifyAboutClones, {
   timezone: "Europe/Prague",
 })
 
