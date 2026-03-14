@@ -367,8 +367,8 @@ async function clonePrefabs() {
 }
 
 async function notifyAboutClones() {
-  for (let i = 0; i < users.length; i++) {
-    const user = users[i]
+  for (let i = 0; i < 2; i++) {
+    const user = ["Libor", "Leona"][i]
     if (!users.includes(user)) return
 
     const todayLocalDate = pragueStartOfToday()
