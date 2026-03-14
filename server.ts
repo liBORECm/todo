@@ -399,7 +399,20 @@ async function notifyAboutClones() {
       clone.deadline.setDate(clone.scheduled_at.getDate() + clone.days || 1)
     }
 
-    if(clones.length === 0) continue
+    if(clones.length === 0) {
+      console.log(`Sending notification to ${user} that no task is for today`)
+      await fetch(`http://10.10.10.1:5542/todo-list-${user}`, {
+        method: 'POST',
+        headers: {
+          'Title': "No tasks for today",
+          'Tags': 'sunglasses,sunrise',
+          'Click': `http://10.10.10.1:5533/${user}`
+        },
+        body: "Enjoy your taskless day 🌻"
+      })
+      
+      continue
+    }
 
 
     console.log(`Sending notification to ${user}, with tasks: ${JSON.stringify(clones, null, 2)}`)
