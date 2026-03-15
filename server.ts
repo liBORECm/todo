@@ -432,7 +432,7 @@ cron.schedule("10 0 * * *", clonePrefabs, {
   timezone: "Europe/Prague",
 })
 
-cron.schedule("0 8 * * *", notifyAboutClones, {
+cron.schedule("0 6 * * *", notifyAboutClones, {
   timezone: "Europe/Prague",
 })
 
