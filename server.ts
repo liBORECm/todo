@@ -331,6 +331,56 @@ app.get("/:user/:id/cloneDone", async (req, res) => {
   res.redirect(`/${req.params.user}`)
 })
 
+async function notifyAboutUnfinishedClones() {
+  for (let i = 0; i < 2; i++) {
+    const user = ["Libor", "Leona"][i]
+    if (!users.includes(user)) return
+
+    const todayLocalDate = pragueStartOfToday()
+
+    let clonesQuery
+
+    clonesQuery = db("tasks_clone")
+      .join("tasks_prefab", "tasks_clone.prefab_id", "tasks_prefab.id")
+      .where("user", user)
+      .whereRaw(
+        `
+      ? BETWEEN
+        DATE(tasks_clone.scheduled_at)
+        AND DATE_ADD(
+          DATE(tasks_clone.scheduled_at),
+          INTERVAL tasks_prefab.days DAY
+        )
+    `,
+        [todayLocalDate],
+      )
+
+    clonesQuery.whereNull("finished_at")
+
+    const clones = await clonesQuery
+    for (const clone of clones) {
+      const now = new Date()
+      clone.deadline = now
+      clone.deadline.setDate(clone.scheduled_at.getDate() + clone.days || 1)
+    }
+
+    if(clones.length === 0) {      
+      continue
+    }
+
+    console.log(`Sending notification to ${user}, with tasks: ${JSON.stringify(clones, null, 2)}`)
+    await fetch(`http://10.10.10.1:5542/todo-list-${user}`, {
+      method: 'POST',
+      headers: {
+        'Title': "Reminder of unfinshed tasks for today",
+        'Tags': 'hourglass_flowing_sand',
+        'Click': `http://10.10.10.1:5533/${user}`
+      },
+      body: clones.map((task) => ` - ${task.name}`).join("\n")
+    })
+  }
+}
+
 async function clonePrefabs() {
   //this function runs at around 00:10 every day
   console.log("running clonePreafbs()! ")
@@ -420,7 +470,7 @@ async function notifyAboutClones() {
       method: 'POST',
       headers: {
         'Title': "Tasks for today",
-        'Tags': 'warning',
+        'Tags': 'calendar',
         'Click': `http://10.10.10.1:5533/${user}`
       },
       body: clones.map((task) => ` - ${task.name}`).join("\n")
@@ -433,6 +483,11 @@ cron.schedule("10 0 * * *", clonePrefabs, {
 })
 
 cron.schedule("0 6 * * *", notifyAboutClones, {
+  timezone: "Europe/Prague",
+})
+
+
+cron.schedule("0 18 * * *", notifyAboutUnfinishedClones, {
   timezone: "Europe/Prague",
 })
 
