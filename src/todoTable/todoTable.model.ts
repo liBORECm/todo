@@ -1,6 +1,6 @@
 export declare class TodoTable {
-  public id: number
-  public name: string
+    public id: number
+    public name: string
 
-  constructor(id: number, name: string)
+    constructor(id: number, name: string)
 }
