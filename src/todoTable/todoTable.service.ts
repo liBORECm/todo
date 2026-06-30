@@ -1,9 +1,15 @@
 import { TodoTable } from './todoTabl.emodel'
 import db from '../db'
+import { Knex } from 'knex'
 
 class TodoTableService {
-  public async getAll(): Promise<Array<TodoTable>> {
-    return (await db('todo_tables').select()) as Array<TodoTable>
+  public async getAll(
+    modifier?: Knex.QueryCallbackWithArgs<any, any>,
+  ): Promise<Array<TodoTable>> {
+    const query = !modifier
+      ? db('todo_tables')
+      : db('todo_tables').modify(modifier)
+    return (await query) as Array<TodoTable>
   }
 
   public async get(id: number): Promise<TodoTable> {
@@ -27,6 +33,8 @@ class TodoTableService {
 
     return result == 1
   }
+
+  //const modifier = (query) => query.where()
 }
 
 export default new TodoTableService()
