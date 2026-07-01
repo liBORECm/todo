@@ -22,10 +22,13 @@ export abstract class CRUDService<Entity> {
             Entity | undefined
     }
 
-    public async create(table: Entity): Promise<boolean> {
+    public async create(table: Entity): Promise<Entity | undefined> {
         ;(table as any).id = undefined
-        const result = await db(this.tableName).insert(table)
-        return result.length == 1
+        const resultId = Number(
+            (await db(this.tableName).insert(table, 'id'))[0],
+        )
+        const result = await this.get(resultId)
+        return result
     }
 
     public async edit(id: number, table: Entity): Promise<boolean> {
