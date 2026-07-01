@@ -17,8 +17,9 @@ export abstract class CRUDService<Entity> {
         return (await query) as Array<Entity>
     }
 
-    public async get(id: number): Promise<Entity> {
-        return (await db(this.tableName).where('id', id).first()) as Entity
+    public async get(id: number): Promise<Entity | undefined> {
+        return (await db(this.tableName).where('id', id).first()) as
+            Entity | undefined
     }
 
     public async create(table: Entity): Promise<boolean> {
