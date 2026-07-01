@@ -4,7 +4,7 @@ import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocument from './swagger-output.json'
-import todoTableController from './todoTable/todoTable.controller'
+import router from './server.controller'
 
 const app: Application = express()
 const port = Number(process.env.PORT) || 5533
@@ -15,7 +15,7 @@ app.use(express.json({ limit: '16kb' }))
 app.use(express.urlencoded({ extended: true, limit: '16kb' }))
 app.use(express.static('public'))
 
-app.use('/api/v1/', todoTableController)
+app.use(router)
 
 // Serve Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
