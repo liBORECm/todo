@@ -2,23 +2,15 @@ import dotenv from 'dotenv'
 dotenv.config()
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
-import swaggerUi from 'swagger-ui-express'
-import swaggerDocument from './swagger-output.json'
 import router from './server.controller'
 
 const app: Application = express()
 const port = Number(process.env.PORT) || 5533
 
 app.use(express.json())
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }))
-app.use(express.json({ limit: '16kb' }))
-app.use(express.urlencoded({ extended: true, limit: '16kb' }))
-app.use(express.static('public'))
+app.use(cors())
 
 app.use(router)
-
-// Serve Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
