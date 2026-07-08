@@ -31,18 +31,18 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
             Entity | undefined
     }
 
-    public async create(table: Entity): Promise<Entity | undefined> {
-        ;(table as any).id = undefined
+    public async create(record: Entity): Promise<Entity | undefined> {
+        ;(record as any).id = undefined
         const resultId = Number(
-            (await db(this.tableName).insert(table, 'id'))[0],
+            (await db(this.tableName).insert(record, 'id'))[0],
         )
         const result = await this.get(resultId)
         return result
     }
 
-    public async edit(id: number, table: Entity): Promise<boolean> {
-        ;(table as any).id = undefined
-        const result = await db(this.tableName).where('id', id).update(table)
+    public async edit(id: number, record: Entity): Promise<boolean> {
+        ;(record as any).id = undefined
+        const result = await db(this.tableName).where('id', id).update(record)
         return result == 1
     }
 
