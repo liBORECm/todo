@@ -50,3 +50,110 @@ export class SimpleTask extends SimpleTaskBase {
         )
     }
 }
+
+// #region AI-GENERATED SWAGGER
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      TaskPriority:
+ *          type: string
+ *          enum:
+ *              - critical
+ *              - standard
+ *              - low
+ *
+ *      SimpleTaskBase:
+ *          type: object
+ *          required:
+ *              - id
+ *              - tableId
+ *              - name
+ *              - createdAt
+ *              - title
+ *              - priority
+ *          properties:
+ *              id:
+ *                  type: number
+ *              tableId:
+ *                  type: number
+ *              name:
+ *                  type: string
+ *              createdAt:
+ *                  type: string
+ *                  format: date-time
+ *              deletedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *              finishedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              parentId:
+ *                  type: number
+ *                  nullable: true
+ *
+ *      SimpleTask:
+ *          allOf:
+ *              - $ref: '#/components/schemas/SimpleTaskBase'
+ *              - type: object
+ *                properties:
+ *                    subtasks:
+ *                        type: array
+ *                        items:
+ *                            $ref: '#/components/schemas/SimpleTaskBase'
+ *
+ *      SimpleTaskInput:
+ *          type: object
+ *          required:
+ *              - tableId
+ *              - name
+ *              - title
+ *          properties:
+ *              tableId:
+ *                  type: number
+ *              name:
+ *                  type: string
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              parentId:
+ *                  type: number
+ *                  nullable: true
+ *
+ *      SimpleTaskPatchInput:
+ *          type: object
+ *          properties:
+ *              name:
+ *                  type: string
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              parentId:
+ *                  type: number
+ *                  nullable: true
+ */
+// #endregion
