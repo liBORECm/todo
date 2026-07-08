@@ -1,4 +1,4 @@
-import db from '../db'
+import db from '../../db'
 import { Knex } from 'knex'
 
 export abstract class CRUDService<Entity> {

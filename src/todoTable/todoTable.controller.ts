@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import CRUDController from '../CRUD/CRUD.controller'
+import CRUDController from '../common/CRUD/CRUD.controller'
 import { TodoTable } from './todoTable.model'
 import todoTableService from './todoTable.service'
 
