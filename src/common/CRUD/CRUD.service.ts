@@ -1,7 +1,8 @@
 import db from '../../db'
 import { Knex } from 'knex'
+import { CRUDEntity } from './CRUD.model'
 
-export abstract class CRUDService<Entity> {
+export abstract class CRUDService<Entity extends CRUDEntity> {
     tableName: string
 
     constructor(tableName: string) {

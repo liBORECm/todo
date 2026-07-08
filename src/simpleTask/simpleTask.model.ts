@@ -1,33 +1,39 @@
+import { FinishalbeEntity } from '../common/finishable/finishable.model'
+
 export enum TaskPriority {
     CRITICAL = 'critical',
     STANDARD = 'standard',
     LOW = 'low',
 }
 
-export class SimpleTaskBase {
+export class SimpleTaskBase extends FinishalbeEntity {
     constructor(
         public id: number,
-        public tableId: number,
-        public name: string,
         public createdAt: Date,
+        public updatedAt: Date,
         public deletedAt: Date,
         public finishedAt: Date,
+        public tableId: number,
+        public name: string,
         public deadline: Date,
         public title: string,
         public description: string,
         public priority: TaskPriority,
         public parentId: number | null,
-    ) {}
+    ) {
+        super(id, createdAt, updatedAt, deletedAt, finishedAt)
+    }
 }
 
 export class SimpleTask extends SimpleTaskBase {
     constructor(
         public id: number,
-        public tableId: number,
-        public name: string,
         public createdAt: Date,
+        public updatedAt: Date,
         public deletedAt: Date,
         public finishedAt: Date,
+        public tableId: number,
+        public name: string,
         public deadline: Date,
         public title: string,
         public description: string,
@@ -37,11 +43,12 @@ export class SimpleTask extends SimpleTaskBase {
     ) {
         super(
             id,
-            tableId,
-            name,
             createdAt,
+            updatedAt,
             deletedAt,
             finishedAt,
+            tableId,
+            name,
             deadline,
             title,
             description,
@@ -70,6 +77,7 @@ export class SimpleTask extends SimpleTaskBase {
  *              - tableId
  *              - name
  *              - createdAt
+ *              - updatedAt
  *              - title
  *              - priority
  *          properties:
@@ -80,6 +88,9 @@ export class SimpleTask extends SimpleTaskBase {
  *              name:
  *                  type: string
  *              createdAt:
+ *                  type: string
+ *                  format: date-time
+ *              updatedAt:
  *                  type: string
  *                  format: date-time
  *              deletedAt:

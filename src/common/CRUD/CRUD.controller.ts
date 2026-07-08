@@ -2,8 +2,9 @@ import express, { Router } from 'express'
 import { CRUDService } from './CRUD.service'
 import { Knex } from 'knex'
 import ErrorCase from '../Error'
+import { CRUDEntity } from './CRUD.model'
 
-export default abstract class CRUDController<Entity> {
+export default abstract class CRUDController<Entity extends CRUDEntity> {
     service: CRUDService<Entity>
 
     constructor(service: CRUDService<Entity>) {

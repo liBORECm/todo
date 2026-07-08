@@ -1,8 +1,15 @@
-export class TodoTable {
+import { CRUDEntity } from '../common/CRUD/CRUD.model'
+
+export class TodoTable extends CRUDEntity {
     constructor(
         public id: number,
+        public createdAt: Date,
+        public updatedAt: Date,
+        public deletedAt: Date,
         public name: string,
-    ) {}
+    ) {
+        super(id, createdAt, updatedAt, deletedAt)
+    }
 }
 
 /**
@@ -23,6 +30,8 @@ export class TodoTable {
  *          required:
  *              - name
  *              - id
+ *              - createdAt
+ *              - updatedAt
  *          properties:
  *              name:
  *                  type: string
@@ -30,6 +39,16 @@ export class TodoTable {
  *              id:
  *                  type: number
  *                  default: 0
+ *              createdAt:
+ *                  type: string
+ *                  format: date-time
+ *              updatedAt:
+ *                  type: string
+ *                  format: date-time
+ *              deletedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
  */
 
 // #region AI-GENERATED SWAGGER
