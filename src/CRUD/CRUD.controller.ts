@@ -14,23 +14,26 @@ export default abstract class CRUDController<Entity> {
         const router = express.Router()
 
         router.get('/', async (req, res) => {
-            const { sort: presort, ...filters } = req.query
-            const sort =
+            const { sort: presort, offset, limit, ...filters } = req.query
+            const attribute =
                 !presort || typeof presort !== 'string'
                     ? undefined
                     : presort[0] === '-'
                       ? presort.substring(1)
                       : presort
-            const sortOrder =
+            const order =
                 !presort || typeof presort !== 'string'
                     ? undefined
                     : presort[0] !== '-'
                       ? 'ASC'
                       : 'DESC'
 
-            const modifier = (query: Knex.QueryBuilder) => {
-                if (sort && sortOrder) query = query.orderBy(sort, sortOrder)
+            const sort =
+                attribute !== undefined && order !== undefined
+                    ? { attribute, order: order as 'ASC' | 'DESC' }
+                    : undefined
 
+            const modifier = (query: Knex.QueryBuilder) => {
                 for (const [column, value] of Object.entries(filters)) {
                     query = query.where(column, value)
                 }
@@ -39,7 +42,12 @@ export default abstract class CRUDController<Entity> {
             }
 
             try {
-                const result = await this.service.getAll(modifier)
+                const result = await this.service.getAll(
+                    modifier,
+                    sort,
+                    Number(offset),
+                    Number(limit),
+                )
                 return res.status(200).json(result)
             } catch {
                 const { status, message } = ErrorCase.IntenalError

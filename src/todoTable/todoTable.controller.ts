@@ -32,6 +32,14 @@ export default new todoTableController().routes()
  *            schema:
  *              type: string
  *            description: Select a attirbute you want result to be sorted by. If you want it sorted descanding, add a prefix '-'
+ *          - name: offset
+ *            in: query
+ *            schema:
+ *              type: number
+ *          - name: limit
+ *            in: query
+ *            schema:
+ *              type: number
  *      responses:
  *          200:
  *              description: A list of todo tables.

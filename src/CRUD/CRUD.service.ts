@@ -10,10 +10,18 @@ export abstract class CRUDService<Entity> {
 
     public async getAll(
         modifier?: Knex.QueryCallbackWithArgs<any, any>,
+        sort?: { attribute: string; order: 'ASC' | 'DESC' },
+        offset?: number,
+        limit?: number,
     ): Promise<Array<Entity>> {
-        const query = !modifier
-            ? db(this.tableName)
-            : db(this.tableName).modify(modifier)
+        let query = db(this.tableName)
+
+        if (modifier !== undefined) query = query.modify(modifier)
+        if (sort !== undefined)
+            query = query.orderBy(sort.attribute, sort.order)
+        if (offset !== undefined) query = query.offset(offset)
+        if (limit !== undefined) query = query.limit(limit)
+
         return (await query) as Array<Entity>
     }
 
