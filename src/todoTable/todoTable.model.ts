@@ -31,3 +31,16 @@ export declare class TodoTable {
  *                  type: number
  *                  default: 0
  */
+
+// #region AI-GENERATED SWAGGER
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      TodoTablePatchInput:
+ *          type: object
+ *          properties:
+ *              name:
+ *                  type: string
+ *                  default: new todo table
+ */

@@ -31,7 +31,7 @@ export default new todoTableController().routes()
  *            in: query
  *            schema:
  *              type: string
- *            description: Select a attirbute you want result to be sorted by. If you want it sorted descanding, add a prefix '-'
+ *            description: Select an attribute you want result to be sorted by. If you want it sorted descending, add a prefix '-'
  *          - name: offset
  *            in: query
  *            schema:
@@ -100,7 +100,7 @@ export default new todoTableController().routes()
  *          500:
  *              description: Internal error
  *              content:
- *                  appliaction/json:
+ *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/InternalError'
  *          404:
@@ -110,3 +110,72 @@ export default new todoTableController().routes()
  *                      schema:
  *                          $ref: '#/components/schemas/NotFoundError'
  */
+
+// #region AI-GENERATED SWAGGER
+/**
+ * @swagger
+ * /api/v1/todo-table/{id}:
+ *  patch:
+ *      tags:
+ *          - Todo table
+ *      summary: Update a todo table by id
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            description: Id of a todo table
+ *            required: true
+ *            schema:
+ *              type: number
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/TodoTablePatchInput'
+ *      responses:
+ *          200:
+ *              description: Updated todo table
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/TodoTable'
+ *          404:
+ *              description: Not found
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *  delete:
+ *      tags:
+ *          - Todo table
+ *      summary: Delete a todo table by id
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            description: Id of a todo table
+ *            required: true
+ *            schema:
+ *              type: number
+ *      responses:
+ *          200:
+ *              description: Todo table deleted successfully
+ *          404:
+ *              description: Not found
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ */
+// #endregion
