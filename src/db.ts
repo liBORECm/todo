@@ -1,4 +1,5 @@
 import { knex } from 'knex'
+import { knexSnakeCaseMappers } from 'objection'
 
 const db = knex({
     client: 'mysql',
@@ -9,6 +10,8 @@ const db = knex({
         password: process.env.DB_PWD || '',
         database: process.env.DB_NAME || 'todo',
     },
+
+    ...knexSnakeCaseMappers(),
 })
 
 export default db
