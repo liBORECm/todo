@@ -27,12 +27,18 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
     }
 
     public async get(id: number): Promise<Entity | undefined> {
-        return (await db(this.tableName).where('id', id).first()) as
-            Entity | undefined
+        return (await db(this.tableName)
+            .where('deleted_at', null)
+            .where('id', id)
+            .first()) as Entity | undefined
     }
 
     public async create(record: Entity): Promise<Entity | undefined> {
         ;(record as any).id = undefined
+        ;(record as any).createdAt = new Date()
+        ;(record as any).updatedAt = new Date()
+        ;(record as any).deletedAt = undefined
+
         const resultId = Number(
             (await db(this.tableName).insert(record, 'id'))[0],
         )
@@ -41,14 +47,21 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
     }
 
     public async edit(id: number, record: Entity): Promise<boolean> {
+        const oldRecord = this.get(id)
+        if (oldRecord === undefined) return false
+
         ;(record as any).id = undefined
+        record.updatedAt = new Date()
         const result = await db(this.tableName).where('id', id).update(record)
         return result == 1
     }
 
     public async delete(id: number): Promise<boolean> {
-        const result = await db(this.tableName).where('id', id).delete()
+        const record = await this.get(id)
+        if (record === undefined) return false
 
-        return result == 1
+        record.deletedAt = new Date()
+
+        return this.edit(id, record)
     }
 }

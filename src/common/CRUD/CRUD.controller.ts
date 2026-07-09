@@ -102,7 +102,7 @@ export default abstract class CRUDController<Entity extends CRUDEntity> {
             ;(newRecord as any).id = undefined
 
             try {
-                const created = this.service.create(newRecord)
+                const created = await this.service.create(newRecord)
                 if (!created) {
                     const { status, message } = ErrorCase.IntenalError
                     return res.status(status).json({ error: message })
