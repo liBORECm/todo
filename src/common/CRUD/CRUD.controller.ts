@@ -4,10 +4,13 @@ import { Knex } from 'knex'
 import ErrorCase from '../Error'
 import { CRUDEntity } from './CRUD.model'
 
-export default abstract class CRUDController<Entity extends CRUDEntity> {
-    service: CRUDService<Entity>
+export default abstract class CRUDController<
+    Entity extends CRUDEntity,
+    Service extends CRUDService<Entity>,
+> {
+    service: Service
 
-    constructor(service: CRUDService<Entity>) {
+    constructor(service: Service) {
         this.service = service
     }
 

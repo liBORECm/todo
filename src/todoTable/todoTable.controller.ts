@@ -2,8 +2,12 @@ import express, { Router } from 'express'
 import CRUDController from '../common/CRUD/CRUD.controller'
 import { TodoTable } from './todoTable.model'
 import todoTableService from './todoTable.service'
+import { CRUDService } from '../common/CRUD/CRUD.service'
 
-class todoTableController extends CRUDController<TodoTable> {
+class todoTableController extends CRUDController<
+    TodoTable,
+    CRUDService<TodoTable>
+> {
     constructor() {
         super(todoTableService)
     }
