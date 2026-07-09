@@ -14,7 +14,6 @@ export class SimpleTaskBase extends FinishalbeEntity {
         public deletedAt: Date,
         public finishedAt: Date,
         public tableId: number,
-        public name: string,
         public deadline: Date,
         public title: string,
         public description: string,
@@ -33,7 +32,6 @@ export class SimpleTask extends SimpleTaskBase {
         public deletedAt: Date,
         public finishedAt: Date,
         public tableId: number,
-        public name: string,
         public deadline: Date,
         public title: string,
         public description: string,
@@ -48,7 +46,6 @@ export class SimpleTask extends SimpleTaskBase {
             deletedAt,
             finishedAt,
             tableId,
-            name,
             deadline,
             title,
             description,
@@ -75,7 +72,6 @@ export class SimpleTask extends SimpleTaskBase {
  *          required:
  *              - id
  *              - tableId
- *              - name
  *              - createdAt
  *              - updatedAt
  *              - title
@@ -85,8 +81,6 @@ export class SimpleTask extends SimpleTaskBase {
  *                  type: number
  *              tableId:
  *                  type: number
- *              name:
- *                  type: string
  *              createdAt:
  *                  type: string
  *                  format: date-time
@@ -129,13 +123,10 @@ export class SimpleTask extends SimpleTaskBase {
  *          type: object
  *          required:
  *              - tableId
- *              - name
  *              - title
  *          properties:
  *              tableId:
  *                  type: number
- *              name:
- *                  type: string
  *              title:
  *                  type: string
  *              description:
@@ -152,8 +143,6 @@ export class SimpleTask extends SimpleTaskBase {
  *      SimpleTaskPatchInput:
  *          type: object
  *          properties:
- *              name:
- *                  type: string
  *              title:
  *                  type: string
  *              description:
