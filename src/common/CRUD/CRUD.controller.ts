@@ -54,7 +54,7 @@ export default abstract class CRUDController<
                 )
                 return res.status(200).json(result)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -69,7 +69,7 @@ export default abstract class CRUDController<
                 }
                 return res.status(200).json(result)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -90,12 +90,12 @@ export default abstract class CRUDController<
                 const patchedRecord = await this.service.get(id)
 
                 if (!patched || !patchedRecord) {
-                    const { status, message } = ErrorCase.IntenalError
+                    const { status, message } = ErrorCase.InternalError
                     return res.status(status).json({ error: message })
                 }
                 return res.status(200).json(patchedRecord)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -107,13 +107,13 @@ export default abstract class CRUDController<
             try {
                 const created = await this.service.create(newRecord)
                 if (!created) {
-                    const { status, message } = ErrorCase.IntenalError
+                    const { status, message } = ErrorCase.InternalError
                     return res.status(status).json({ error: message })
                 }
 
                 return res.status(200).json(created)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -131,12 +131,12 @@ export default abstract class CRUDController<
                 const deleted = await this.service.delete(id)
 
                 if (!deleted) {
-                    const { status, message } = ErrorCase.IntenalError
+                    const { status, message } = ErrorCase.InternalError
                     return res.status(status).json({ error: message })
                 }
                 return res.sendStatus(200)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
