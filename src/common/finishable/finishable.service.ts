@@ -18,6 +18,9 @@ export abstract class FinishableService<
         const record = await this.get(id)
         if (record === undefined) return false
 
+        const isFinished = await this.isFinished(id)
+        if (isFinished) return true
+
         record.finishedAt = new Date()
         return this.edit(id, record)
     }
