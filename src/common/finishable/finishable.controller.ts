@@ -18,13 +18,20 @@ export default abstract class FinishableController<
         router.post('/finish/:id', async (req, res) => {
             const id = Number(req.params.id)
             try {
-                const result = await this.service.get(id)
-                if (result == undefined) {
+                const record0 = await this.service.get(id)
+                if (record0 == undefined) {
                     const { status, message } = ErrorCase.NotFound
                     return res.status(status).json({ error: message })
                 }
 
-                const finished = this.service
+                const finished = await this.service.finish(id)
+                if (!finished) {
+                    const { status, message } = ErrorCase.IntenalError
+                    return res.status(status).json({ error: message })
+                }
+
+                const record = await this.service.get(id)
+                return res.status(200).json(record)
             } catch {
                 const { status, message } = ErrorCase.IntenalError
                 return res.status(status).json({ error: message })
