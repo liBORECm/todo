@@ -15,7 +15,7 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
         offset?: number,
         limit?: number,
     ): Promise<Array<Entity>> {
-        let query = db(this.tableName)
+        let query = db(this.tableName).where('deleted_at', null)
 
         if (modifier !== undefined) query = query.modify(modifier)
         if (sort !== undefined)
