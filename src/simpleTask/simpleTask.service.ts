@@ -29,6 +29,8 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
 
     public edit(id: number, record: SimpleTask): Promise<boolean> {
         return super.edit(id, record, async () => {
+            record.tableId === undefined
+
             if (record.parentId !== null) {
                 if (
                     ((await this.get(record.parentId)) === undefined) ===
