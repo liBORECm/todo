@@ -4,6 +4,7 @@ import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import router from './server.controller'
 import swaggerDocs from './swagger'
+import path from 'node:path'
 
 const app: Application = express()
 const port = Number(process.env.PORT) || 5533
@@ -38,9 +39,10 @@ app.use(router)
 swaggerDocs(app)
 console.log(`Api docs is running on http://localhost:${port}/api-docs`)
 
-// Basic route
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, TypeScript + Express!')
+// Frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
+app.get('*splat', (_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
 // Start the server
