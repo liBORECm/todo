@@ -3,10 +3,11 @@ interface ErrorCase {
     message: string
 }
 
-export default {
-    NotFound: { status: 404, message: 'Not found' },
-    InternalError: { status: 500, message: 'Internal error' },
-} as Record<string, ErrorCase>
+export const NotFound: ErrorCase = { status: 404, message: 'Not found' }
+export const InternalError: ErrorCase = {
+    status: 500,
+    message: 'Internal error',
+}
 
 /**
  * @swagger

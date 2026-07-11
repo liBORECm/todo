@@ -1,8 +1,8 @@
 import express, { Router } from 'express'
 import { CRUDService } from './CRUD.service'
 import { Knex } from 'knex'
-import ErrorCase from '../Error'
 import { CRUDEntity } from './CRUD.model'
+import { InternalError, NotFound } from '../Error'
 
 export default abstract class CRUDController<
     Entity extends CRUDEntity,
@@ -55,7 +55,7 @@ export default abstract class CRUDController<
                 )
                 return res.status(200).json(result)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -65,12 +65,12 @@ export default abstract class CRUDController<
             try {
                 const result = await this.service.get(id)
                 if (result == undefined) {
-                    const { status, message } = ErrorCase.NotFound
+                    const { status, message } = NotFound
                     return res.status(status).json({ error: message })
                 }
                 return res.status(200).json(result)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -83,7 +83,7 @@ export default abstract class CRUDController<
             try {
                 const result = await this.service.get(id)
                 if (result == undefined) {
-                    const { status, message } = ErrorCase.NotFound
+                    const { status, message } = NotFound
                     return res.status(status).json({ error: message })
                 }
 
@@ -91,12 +91,12 @@ export default abstract class CRUDController<
                 const patchedRecord = await this.service.get(id)
 
                 if (!patched || !patchedRecord) {
-                    const { status, message } = ErrorCase.InternalError
+                    const { status, message } = InternalError
                     return res.status(status).json({ error: message })
                 }
                 return res.status(200).json(patchedRecord)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -108,13 +108,13 @@ export default abstract class CRUDController<
             try {
                 const created = await this.service.create(newRecord)
                 if (!created) {
-                    const { status, message } = ErrorCase.InternalError
+                    const { status, message } = InternalError
                     return res.status(status).json({ error: message })
                 }
 
                 return res.status(200).json(created)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })
@@ -125,19 +125,19 @@ export default abstract class CRUDController<
             try {
                 const result = await this.service.get(id)
                 if (result == undefined) {
-                    const { status, message } = ErrorCase.NotFound
+                    const { status, message } = NotFound
                     return res.status(status).json({ error: message })
                 }
 
                 const deleted = await this.service.delete(id)
 
                 if (!deleted) {
-                    const { status, message } = ErrorCase.InternalError
+                    const { status, message } = InternalError
                     return res.status(status).json({ error: message })
                 }
                 return res.sendStatus(200)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })

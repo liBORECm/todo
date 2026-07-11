@@ -2,7 +2,7 @@ import { Router } from 'express'
 import CRUDController from '../CRUD/CRUD.controller'
 import { FinishalbeEntity } from './finishable.model'
 import { FinishableService } from './finishable.service'
-import ErrorCase from '../Error'
+import { InternalError, NotFound } from '../Error'
 
 export default abstract class FinishableController<
     Entity extends FinishalbeEntity,
@@ -21,20 +21,20 @@ export default abstract class FinishableController<
             try {
                 const record0 = await this.service.get(id)
                 if (record0 == undefined) {
-                    const { status, message } = ErrorCase.NotFound
+                    const { status, message } = NotFound
                     return res.status(status).json({ error: message })
                 }
 
                 const finished = await this.service.finish(id)
                 if (!finished) {
-                    const { status, message } = ErrorCase.InternalError
+                    const { status, message } = InternalError
                     return res.status(status).json({ error: message })
                 }
 
                 const record = await this.service.get(id)
                 return res.status(200).json(record)
             } catch {
-                const { status, message } = ErrorCase.InternalError
+                const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
         })
