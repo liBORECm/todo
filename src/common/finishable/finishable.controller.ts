@@ -27,14 +27,14 @@ export default abstract class FinishableController<
 
                 const finished = await this.service.finish(id)
                 if (!finished) {
-                    const { status, message } = ErrorCase.IntenalError
+                    const { status, message } = ErrorCase.InternalError
                     return res.status(status).json({ error: message })
                 }
 
                 const record = await this.service.get(id)
                 return res.status(200).json(record)
             } catch {
-                const { status, message } = ErrorCase.IntenalError
+                const { status, message } = ErrorCase.InternalError
                 return res.status(status).json({ error: message })
             }
         })
