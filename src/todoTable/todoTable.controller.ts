@@ -6,7 +6,8 @@ import { CRUDService } from '../common/CRUD/CRUD.service'
 
 class todoTableController extends CRUDController<
     TodoTable,
-    CRUDService<TodoTable>
+    TodoTable,
+    CRUDService<TodoTable, TodoTable>
 > {
     constructor() {
         super(todoTableService)

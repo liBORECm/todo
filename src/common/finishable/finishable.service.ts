@@ -4,7 +4,8 @@ import { FinishalbeEntity } from './finishable.model'
 
 export abstract class FinishableService<
     Entity extends FinishalbeEntity,
-> extends CRUDService<Entity> {
+    EnrichedEntity extends Entity,
+> extends CRUDService<Entity, EnrichedEntity> {
     constructor(tableName: string) {
         super(tableName)
     }

@@ -1,7 +1,7 @@
 import { FinishableService } from '../common/finishable/finishable.service'
 import { SimpleTask, SimpleTaskBase } from './simpleTask.model'
 
-class SimpleTaskService extends FinishableService<SimpleTask> {
+class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
     private async getParent(
         simpleTask: SimpleTask,
     ): Promise<SimpleTask | undefined> {
@@ -41,7 +41,7 @@ class SimpleTaskService extends FinishableService<SimpleTask> {
         })
     }
 
-    public create(record: SimpleTask): Promise<SimpleTask | undefined> {
+    public create(record: SimpleTask): Promise<SimpleTaskBase | undefined> {
         return super.create(record, async () => {
             if (record.parentId !== null) {
                 if (

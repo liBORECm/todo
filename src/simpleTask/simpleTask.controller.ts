@@ -1,12 +1,13 @@
 import FinishableController from '../common/finishable/finishable.controller'
 import { FinishableService } from '../common/finishable/finishable.service'
-import { SimpleTask } from './simpleTask.model'
+import { SimpleTask, SimpleTaskBase } from './simpleTask.model'
 import simpleTaskService from './simpleTask.service'
 import express, { Router } from 'express'
 
 class SimpleTaskController extends FinishableController<
+    SimpleTaskBase,
     SimpleTask,
-    FinishableService<SimpleTask>
+    FinishableService<SimpleTaskBase, SimpleTask>
 > {
     constructor() {
         super(simpleTaskService)

@@ -6,8 +6,9 @@ import ErrorCase from '../Error'
 
 export default abstract class FinishableController<
     Entity extends FinishalbeEntity,
-    Service extends FinishableService<Entity>,
-> extends CRUDController<Entity, Service> {
+    EnrichedEntity extends Entity,
+    Service extends FinishableService<Entity, EnrichedEntity>,
+> extends CRUDController<Entity, EnrichedEntity, Service> {
     constructor(service: Service) {
         super(service)
     }

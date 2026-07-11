@@ -2,7 +2,10 @@ import db from '../../db'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
 
-export abstract class CRUDService<Entity extends CRUDEntity> {
+export abstract class CRUDService<
+    Entity extends CRUDEntity,
+    EnrichedEntity extends Entity,
+> {
     tableName: string
 
     constructor(tableName: string) {
@@ -26,11 +29,18 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
         return (await query) as Array<Entity>
     }
 
-    public async get(id: number): Promise<Entity | undefined> {
-        return (await db(this.tableName)
+    public async get(
+        id: number,
+        enrich?: (record: Entity) => Promise<EnrichedEntity | undefined>,
+    ): Promise<EnrichedEntity | undefined> {
+        const base = await db(this.tableName)
             .where('deleted_at', null)
             .where('id', id)
-            .first()) as Entity | undefined
+            .first()
+
+        if (base === undefined) return undefined
+        if (enrich === undefined) return base
+        return await enrich(base)
     }
 
     public async create(

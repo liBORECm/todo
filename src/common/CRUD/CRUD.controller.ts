@@ -6,7 +6,8 @@ import { CRUDEntity } from './CRUD.model'
 
 export default abstract class CRUDController<
     Entity extends CRUDEntity,
-    Service extends CRUDService<Entity>,
+    EnrichedEntity extends Entity,
+    Service extends CRUDService<Entity, EnrichedEntity>,
 > {
     service: Service
 

@@ -3,6 +3,6 @@ import db from '../db'
 import { Knex } from 'knex'
 import { CRUDService } from '../common/CRUD/CRUD.service'
 
-class TodoTableService extends CRUDService<TodoTable> {}
+class TodoTableService extends CRUDService<TodoTable, TodoTable> {}
 
 export default new TodoTableService('todo_tables')
