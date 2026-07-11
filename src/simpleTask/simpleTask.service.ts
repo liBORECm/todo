@@ -1,4 +1,10 @@
+import { EntityName } from 'typescript'
 import { FinishableService } from '../common/finishable/finishable.service'
+import HttpError, {
+    CannotCreateCycles,
+    ParentDoesntExist,
+    UnfinishedSubtask,
+} from '../common/HttpError'
 import { SimpleTask, SimpleTaskBase } from './simpleTask.model'
 
 class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
@@ -27,7 +33,7 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
         return this.isCyclicRec(parent, initialId)
     }
 
-    public edit(id: number, record: SimpleTask): Promise<boolean> {
+    public edit(id: number, record: SimpleTask): Promise<SimpleTask> {
         return super.edit(id, record, async () => {
             record.tableId === undefined
 
@@ -36,24 +42,23 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
                     ((await this.get(record.parentId)) === undefined) ===
                     undefined
                 )
-                    return false
+                    throw new HttpError(ParentDoesntExist)
             }
 
-            return !(await this.isCyclicRec(record, id))
+            if (await this.isCyclicRec(record, id))
+                throw new HttpError(CannotCreateCycles)
         })
     }
 
-    public create(record: SimpleTask): Promise<SimpleTaskBase | undefined> {
+    public create(record: SimpleTask): Promise<SimpleTaskBase> {
         return super.create(record, async () => {
             if (record.parentId !== null) {
                 if (
                     ((await this.get(record.parentId)) === undefined) ===
                     undefined
                 )
-                    return false
+                    throw new HttpError(ParentDoesntExist)
             }
-
-            return true
         })
     }
 
@@ -72,20 +77,18 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
         return task.finishedAt !== null
     }
 
-    public finish(id: number): Promise<boolean> {
+    public finish(id: number): Promise<SimpleTask> {
         return super.finish(id, async () => {
             const task = await this.get(id)
-            if (task === undefined) return true
 
             for (const subtask of task.subtasks) {
-                if (!(await this.isFinished(subtask.id))) return false
+                if (!(await this.isFinished(subtask.id)))
+                    throw new HttpError(UnfinishedSubtask)
             }
-
-            return true
         })
     }
 
-    public get(id: number): Promise<SimpleTask | undefined> {
+    public get(id: number): Promise<SimpleTask> {
         return super.get(id, async (baseTask) => {
             const subtasks = await this.getAll((query) =>
                 query.where('parentId', baseTask.id),

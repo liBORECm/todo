@@ -1,6 +1,7 @@
 import db from '../../db'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
+import HttpError, { NotFound } from '../HttpError'
 
 export abstract class CRUDService<
     Entity extends CRUDEntity,
@@ -31,24 +32,23 @@ export abstract class CRUDService<
 
     public async get(
         id: number,
-        enrich?: (record: Entity) => Promise<EnrichedEntity | undefined>,
-    ): Promise<EnrichedEntity | undefined> {
+        enrich?: (record: Entity) => Promise<EnrichedEntity>,
+    ): Promise<EnrichedEntity> {
         const base = await db(this.tableName)
             .where('deleted_at', null)
             .where('id', id)
             .first()
 
-        if (base === undefined) return undefined
+        if (base === undefined) throw new HttpError(NotFound)
         if (enrich === undefined) return base
         return await enrich(base)
     }
 
     public async create(
         record: Entity,
-        approveCreate?: () => Promise<boolean>,
-    ): Promise<Entity | undefined> {
-        if (approveCreate !== undefined && !(await approveCreate()))
-            return undefined
+        approveCreate?: () => Promise<void>,
+    ): Promise<Entity> {
+        if (approveCreate !== undefined) await approveCreate()
 
         ;(record as any).id = undefined
         ;(record as any).createdAt = new Date()
@@ -65,31 +65,24 @@ export abstract class CRUDService<
     public async edit(
         id: number,
         record: Entity,
-        approveEdit?: () => Promise<boolean>,
-    ): Promise<boolean> {
-        if (approveEdit !== undefined && !(await approveEdit())) return false
-
-        const oldRecord = this.get(id)
-        if (oldRecord === undefined) return false
+        approveEdit?: () => Promise<void>,
+    ): Promise<EnrichedEntity> {
+        if (approveEdit !== undefined) await approveEdit()
 
         ;(record as any).id = undefined
         record.updatedAt = new Date()
-        const result = await db(this.tableName).where('id', id).update(record)
-        return result == 1
+        await db(this.tableName).where('id', id).update(record)
+        return await this.get(id)
     }
 
     public async delete(
         id: number,
-        approveDelete?: () => Promise<boolean>,
-    ): Promise<boolean> {
-        if (approveDelete !== undefined && !(await approveDelete()))
-            return false
+        approveDelete?: () => Promise<void>,
+    ): Promise<Entity> {
+        if (approveDelete !== undefined) await approveDelete()
 
         const record = await this.get(id)
-        if (record === undefined) return false
-
         record.deletedAt = new Date()
-
-        return this.edit(id, record)
+        return await this.edit(id, record)
     }
 }

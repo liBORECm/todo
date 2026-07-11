@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import { CRUDService } from './CRUD.service'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
-import { InternalError, NotFound } from '../Error'
+import HttpError, { InternalError, NotFound } from '../HttpError'
 
 export default abstract class CRUDController<
     Entity extends CRUDEntity,
@@ -54,7 +54,10 @@ export default abstract class CRUDController<
                     Number(limit),
                 )
                 return res.status(200).json(result)
-            } catch {
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
+
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
@@ -69,7 +72,10 @@ export default abstract class CRUDController<
                     return res.status(status).json({ error: message })
                 }
                 return res.status(200).json(result)
-            } catch {
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
+
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
@@ -95,7 +101,10 @@ export default abstract class CRUDController<
                     return res.status(status).json({ error: message })
                 }
                 return res.status(200).json(patchedRecord)
-            } catch {
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
+
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
@@ -113,7 +122,10 @@ export default abstract class CRUDController<
                 }
 
                 return res.status(200).json(created)
-            } catch {
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
+
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }
@@ -136,7 +148,10 @@ export default abstract class CRUDController<
                     return res.status(status).json({ error: message })
                 }
                 return res.sendStatus(200)
-            } catch {
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
+
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }

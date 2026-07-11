@@ -2,7 +2,7 @@ import { Router } from 'express'
 import CRUDController from '../CRUD/CRUD.controller'
 import { FinishalbeEntity } from './finishable.model'
 import { FinishableService } from './finishable.service'
-import { InternalError, NotFound } from '../Error'
+import HttpError, { InternalError, NotFound } from '../HttpError'
 
 export default abstract class FinishableController<
     Entity extends FinishalbeEntity,
@@ -19,21 +19,15 @@ export default abstract class FinishableController<
         router.post('/finish/:id', async (req, res) => {
             const id = Number(req.params.id)
             try {
-                const record0 = await this.service.get(id)
-                if (record0 == undefined) {
-                    const { status, message } = NotFound
-                    return res.status(status).json({ error: message })
-                }
+                //Check that the record exists
+                await this.service.get(id)
 
                 const finished = await this.service.finish(id)
-                if (!finished) {
-                    const { status, message } = InternalError
-                    return res.status(status).json({ error: message })
-                }
+                return res.status(200).json(finished)
+            } catch (e) {
+                if (e instanceof HttpError)
+                    return res.status(e.status).json({ error: e.message })
 
-                const record = await this.service.get(id)
-                return res.status(200).json(record)
-            } catch {
                 const { status, message } = InternalError
                 return res.status(status).json({ error: message })
             }

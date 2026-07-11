@@ -17,16 +17,13 @@ export abstract class FinishableService<
 
     public async finish(
         id: number,
-        approveFinishing?: () => Promise<boolean>,
-    ): Promise<boolean> {
-        if (approveFinishing !== undefined && !(await approveFinishing()))
-            return false
+        approveFinishing?: () => Promise<void>,
+    ): Promise<EnrichedEntity> {
+        if (approveFinishing !== undefined) await approveFinishing()
 
         const record = await super.get(id)
-        if (record === undefined) return false
-
         const isFinished = await this.isFinished(id)
-        if (isFinished) return true
+        if (isFinished) return record
 
         record.finishedAt = new Date()
         return this.edit(id, record)
