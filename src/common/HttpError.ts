@@ -9,15 +9,15 @@ export const InternalError: ErrorCase = {
     message: 'Internal error',
 }
 export const ParentDoesntExist: ErrorCase = {
-    status: 403,
+    status: 400,
     message: 'Parent doenst exist',
 }
 export const CannotCreateCycles: ErrorCase = {
-    status: 403,
+    status: 400,
     message: 'Cannot create cycles',
 }
 export const UnfinishedSubtask: ErrorCase = {
-    status: 403,
+    status: 400,
     message: 'A subtask is unfinished',
 }
 
@@ -48,5 +48,10 @@ export default class HttpError extends Error {
  *              error:
  *                  type: string
  *                  default: "Not found"
+ *      BadRequestError:
+ *          type: object
+ *          properties:
+ *              error:
+ *                  type: string
  *
  */

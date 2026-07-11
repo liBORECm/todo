@@ -81,6 +81,12 @@ export default new SimpleTaskController().routes()
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/SimpleTask'
+ *          400:
+ *              description: Parent task does not exist
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ForbiddenError'
  *          500:
  *              description: Internal error
  *              content:
@@ -146,6 +152,12 @@ export default new SimpleTaskController().routes()
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/SimpleTask'
+ *          400:
+ *              description: Parent task does not exist or would create a cycle
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ForbiddenError'
  *          404:
  *              description: Not found
  *              content:
@@ -203,6 +215,16 @@ export default new SimpleTaskController().routes()
  *      responses:
  *          200:
  *              description: Simple task marked as finished
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SimpleTask'
+ *          400:
+ *              description: One or more subtasks are not finished
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ForbiddenError'
  *          404:
  *              description: Not found
  *              content:

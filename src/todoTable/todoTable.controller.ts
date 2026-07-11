@@ -95,6 +95,8 @@ export default new todoTableController().routes()
  *            in: path
  *            description: Id of a todo table
  *            required: true
+ *            schema:
+ *              type: number
  *      responses:
  *          200:
  *              description: Selected todo table
@@ -102,18 +104,18 @@ export default new todoTableController().routes()
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/TodoTable'
- *          500:
- *              description: Internal error
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/InternalError'
  *          404:
  *              description: Not found
  *              content:
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
  */
 
 // #region AI-GENERATED SWAGGER
