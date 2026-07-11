@@ -33,7 +33,13 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
             .first()) as Entity | undefined
     }
 
-    public async create(record: Entity): Promise<Entity | undefined> {
+    public async create(
+        record: Entity,
+        approveCreate?: () => Promise<boolean>,
+    ): Promise<Entity | undefined> {
+        if (approveCreate !== undefined && !(await approveCreate()))
+            return undefined
+
         ;(record as any).id = undefined
         ;(record as any).createdAt = new Date()
         ;(record as any).updatedAt = new Date()
@@ -46,7 +52,13 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
         return result
     }
 
-    public async edit(id: number, record: Entity): Promise<boolean> {
+    public async edit(
+        id: number,
+        record: Entity,
+        approveEdit?: () => Promise<boolean>,
+    ): Promise<boolean> {
+        if (approveEdit !== undefined && !(await approveEdit())) return false
+
         const oldRecord = this.get(id)
         if (oldRecord === undefined) return false
 
@@ -56,7 +68,13 @@ export abstract class CRUDService<Entity extends CRUDEntity> {
         return result == 1
     }
 
-    public async delete(id: number): Promise<boolean> {
+    public async delete(
+        id: number,
+        approveDelete?: () => Promise<boolean>,
+    ): Promise<boolean> {
+        if (approveDelete !== undefined && !(await approveDelete()))
+            return false
+
         const record = await this.get(id)
         if (record === undefined) return false
 
