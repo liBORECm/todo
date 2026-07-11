@@ -22,7 +22,7 @@ export abstract class FinishableService<
         if (approveFinishing !== undefined && !(await approveFinishing()))
             return false
 
-        const record = await this.get(id)
+        const record = await super.get(id)
         if (record === undefined) return false
 
         const isFinished = await this.isFinished(id)

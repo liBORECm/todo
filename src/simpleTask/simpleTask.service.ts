@@ -55,6 +55,34 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
         })
     }
 
+    /**
+     * Checking if is all of the subtasks are finished recursively
+     * @param id id of a simpleTask
+     */
+    public async isFinished(id: number): Promise<boolean> {
+        const task = await this.get(id)
+        if (task === undefined) return true
+
+        for (const subtask of task.subtasks) {
+            if (!(await this.isFinished(subtask.id))) return false
+        }
+
+        return task.finishedAt !== null
+    }
+
+    public finish(id: number): Promise<boolean> {
+        return super.finish(id, async () => {
+            const task = await this.get(id)
+            if (task === undefined) return true
+
+            for (const subtask of task.subtasks) {
+                if (!(await this.isFinished(subtask.id))) return false
+            }
+
+            return true
+        })
+    }
+
     public get(id: number): Promise<SimpleTask | undefined> {
         return super.get(id, async (baseTask) => {
             const subtasks = await this.getAll((query) =>
