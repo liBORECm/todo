@@ -14,7 +14,13 @@ export abstract class FinishableService<
         return record !== undefined && record.finishedAt !== null
     }
 
-    public async finish(id: number): Promise<boolean> {
+    public async finish(
+        id: number,
+        approveFinishing?: () => Promise<boolean>,
+    ): Promise<boolean> {
+        if (approveFinishing !== undefined && !(await approveFinishing()))
+            return false
+
         const record = await this.get(id)
         if (record === undefined) return false
 
