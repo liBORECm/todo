@@ -54,6 +54,29 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
             return true
         })
     }
+
+    public get(id: number): Promise<SimpleTask | undefined> {
+        return super.get(id, async (baseTask) => {
+            const subtasks = await this.getAll((query) =>
+                query.where('parentId', baseTask.id),
+            )
+
+            return new SimpleTask(
+                baseTask.id,
+                baseTask.createdAt,
+                baseTask.updatedAt,
+                baseTask.deletedAt,
+                baseTask.finishedAt,
+                baseTask.tableId,
+                baseTask.deadline,
+                baseTask.title,
+                baseTask.description,
+                baseTask.priority,
+                baseTask.parentId,
+                subtasks,
+            )
+        })
+    }
 }
 
 export default new SimpleTaskService('simple_tasks')
