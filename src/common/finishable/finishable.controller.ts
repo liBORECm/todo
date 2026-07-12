@@ -2,7 +2,7 @@ import { Router } from 'express'
 import CRUDController from '../CRUD/CRUD.controller'
 import { FinishalbeEntity } from './finishable.model'
 import { FinishableService } from './finishable.service'
-import HttpError, { InternalError, NotFound } from '../HttpError'
+import HttpError, { InternalError } from '../httpError'
 
 export default abstract class FinishableController<
     Entity extends FinishalbeEntity,

@@ -4,7 +4,7 @@ import HttpError, {
     CannotCreateCycles,
     ParentDoesntExist,
     UnfinishedSubtask,
-} from '../common/HttpError'
+} from '../common/httpError'
 import { SimpleTask, SimpleTaskBase } from './simpleTask.model'
 
 class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {

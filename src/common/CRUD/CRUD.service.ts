@@ -1,7 +1,7 @@
 import db from '../../db'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
-import HttpError, { NotFound } from '../HttpError'
+import HttpError, { NotFound } from '../httpError'
 
 export abstract class CRUDService<
     Entity extends CRUDEntity,
@@ -78,11 +78,12 @@ export abstract class CRUDService<
     public async delete(
         id: number,
         approveDelete?: () => Promise<void>,
-    ): Promise<Entity> {
+    ): Promise<boolean> {
         if (approveDelete !== undefined) await approveDelete()
 
-        const record = await this.get(id)
-        record.deletedAt = new Date()
-        return await this.edit(id, record)
+        const affected = await db(this.tableName)
+            .where('id', id)
+            .update({ deletedAt: new Date() })
+        return affected === 1
     }
 }

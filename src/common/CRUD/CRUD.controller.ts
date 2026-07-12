@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import { CRUDService } from './CRUD.service'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
-import HttpError, { InternalError, NotFound } from '../HttpError'
+import HttpError, { InternalError, NotFound } from '../httpError'
 
 export default abstract class CRUDController<
     Entity extends CRUDEntity,
@@ -135,18 +135,14 @@ export default abstract class CRUDController<
             const id = Number(req.params.id)
 
             try {
-                const result = await this.service.get(id)
-                if (result == undefined) {
-                    const { status, message } = NotFound
-                    return res.status(status).json({ error: message })
-                }
+                /**
+                 * Check if record exists
+                 */
+                await this.service.get(id)
 
                 const deleted = await this.service.delete(id)
+                if (!deleted) throw new HttpError(InternalError)
 
-                if (!deleted) {
-                    const { status, message } = InternalError
-                    return res.status(status).json({ error: message })
-                }
                 return res.sendStatus(200)
             } catch (e) {
                 if (e instanceof HttpError)
