@@ -14,7 +14,7 @@ const options: swaggerJsdoc.Options = {
     apis: [
         './src/*/*.controller.ts',
         './src/*/*.model.ts',
-        './src/common/Error.ts',
+        './src/common/httpError.ts',
     ],
 }
 
