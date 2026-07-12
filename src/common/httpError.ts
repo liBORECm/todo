@@ -32,6 +32,10 @@ export default class HttpError extends Error {
     }
 }
 
+export function isHttpError(e: unknown): e is HttpError {
+    return 'status' in (e as any) && 'message' in (e as any)
+}
+
 /**
  * @swagger
  * components:

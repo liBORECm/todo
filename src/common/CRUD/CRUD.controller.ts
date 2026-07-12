@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import { CRUDService } from './CRUD.service'
 import { Knex } from 'knex'
 import { CRUDEntity } from './CRUD.model'
-import HttpError, { InternalError, NotFound } from '../httpError'
+import HttpError, { InternalError, isHttpError, NotFound } from '../httpError'
 
 export default abstract class CRUDController<
     Entity extends CRUDEntity,
@@ -55,7 +55,7 @@ export default abstract class CRUDController<
                 )
                 return res.status(200).json(result)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError
@@ -73,7 +73,7 @@ export default abstract class CRUDController<
                 }
                 return res.status(200).json(result)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError
@@ -102,7 +102,7 @@ export default abstract class CRUDController<
                 }
                 return res.status(200).json(patchedRecord)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError
@@ -123,7 +123,7 @@ export default abstract class CRUDController<
 
                 return res.status(200).json(created)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError
@@ -145,7 +145,7 @@ export default abstract class CRUDController<
 
                 return res.sendStatus(200)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError

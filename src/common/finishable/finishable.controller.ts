@@ -2,7 +2,7 @@ import { Router } from 'express'
 import CRUDController from '../CRUD/CRUD.controller'
 import { FinishalbeEntity } from './finishable.model'
 import { FinishableService } from './finishable.service'
-import HttpError, { InternalError } from '../httpError'
+import HttpError, { InternalError, isHttpError } from '../httpError'
 
 export default abstract class FinishableController<
     Entity extends FinishalbeEntity,
@@ -25,7 +25,7 @@ export default abstract class FinishableController<
                 const finished = await this.service.finish(id)
                 return res.status(200).json(finished)
             } catch (e) {
-                if (e instanceof HttpError)
+                if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
                 const { status, message } = InternalError
