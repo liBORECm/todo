@@ -86,7 +86,7 @@ export default new SimpleTaskController().routes()
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/ForbiddenError'
+ *                          $ref: '#/components/schemas/BadRequestError'
  *          500:
  *              description: Internal error
  *              content:
@@ -157,7 +157,7 @@ export default new SimpleTaskController().routes()
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/ForbiddenError'
+ *                          $ref: '#/components/schemas/BadRequestError'
  *          404:
  *              description: Not found
  *              content:
@@ -224,7 +224,7 @@ export default new SimpleTaskController().routes()
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/ForbiddenError'
+ *                          $ref: '#/components/schemas/BadRequestError'
  *          404:
  *              description: Not found
  *              content:

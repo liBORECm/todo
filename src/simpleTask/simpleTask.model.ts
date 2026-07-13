@@ -55,6 +55,17 @@ export class SimpleTask extends SimpleTaskBase {
     }
 }
 
+export class SimpleTaskShort {
+    constructor(
+        public id: number,
+        public finishedAt: Date | null,
+        public deadline: Date,
+        public title: string,
+        public priority: TaskPriority,
+        public parentId: number | null,
+    ) {}
+}
+
 // #region AI-GENERATED SWAGGER
 /**
  * @swagger
@@ -155,5 +166,31 @@ export class SimpleTask extends SimpleTaskBase {
  *              parentId:
  *                  type: number
  *                  nullable: true
+ *
+ *      SimpleTaskShort:
+ *          type: object
+ *          required:
+ *              - id
+ *              - title
+ *              - deadline
+ *              - priority
+ *          properties:
+ *              id:
+ *                  type: number
+ *              title:
+ *                  type: string
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              parentId:
+ *                  type: number
+ *                  nullable: true
+ *              finishedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *
  */
 // #endregion

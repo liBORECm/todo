@@ -1,4 +1,5 @@
 import { CRUDEntity } from '../common/CRUD/CRUD.model'
+import { SimpleTaskShort } from '../simpleTask/simpleTask.model'
 
 export class TodoTable extends CRUDEntity {
     constructor(
@@ -10,6 +11,14 @@ export class TodoTable extends CRUDEntity {
     ) {
         super(id, createdAt, updatedAt, deletedAt)
     }
+}
+
+export class TodoTree {
+    constructor(
+        public id: number,
+        public name: string,
+        public tasks: SimpleTaskShort[],
+    ) {}
 }
 
 /**
@@ -49,6 +58,27 @@ export class TodoTable extends CRUDEntity {
  *                  type: string
  *                  format: date-time
  *                  nullable: true
+ */
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      TodoTree:
+ *          type: object
+ *          required:
+ *              - id
+ *              - name
+ *              - tasks
+ *          properties:
+ *              id:
+ *                  type: number
+ *              name:
+ *                  type: string
+ *              tasks:
+ *                  type: array
+ *                  items:
+ *                      $ref: '#/components/schemas/SimpleTaskShort'
  */
 
 // #region AI-GENERATED SWAGGER
