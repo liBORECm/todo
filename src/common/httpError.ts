@@ -20,6 +20,14 @@ export const UnfinishedSubtask: ErrorCase = {
     status: 400,
     message: 'A subtask is unfinished',
 }
+export const InvaliadCRON: ErrorCase = {
+    status: 400,
+    message: 'Invalid CRON',
+}
+export const InvalidDuration: ErrorCase = {
+    status: 400,
+    message: 'Invalid duration',
+}
 
 export default class HttpError extends Error {
     public readonly status: number
