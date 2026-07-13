@@ -11,7 +11,8 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
     private async getParent(
         simpleTask: SimpleTask,
     ): Promise<SimpleTask | undefined> {
-        if (simpleTask.parentId === null) return undefined
+        if (simpleTask.parentId === null || simpleTask.parentId === undefined)
+            return undefined
 
         return await this.get(simpleTask.parentId)
     }
@@ -37,14 +38,13 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
         return super.edit(id, record, async () => {
             record.tableId === undefined
 
-            if (record.parentId !== null) {
+            if (record.parentId !== null && record.parentId !== undefined) {
                 if (
                     ((await this.get(record.parentId)) === undefined) ===
                     undefined
                 )
                     throw new HttpError(ParentDoesntExist)
             }
-
             if (await this.isCyclicRec(record, id))
                 throw new HttpError(CannotCreateCycles)
         })
