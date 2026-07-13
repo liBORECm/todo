@@ -35,6 +35,21 @@ export interface SimpleTaskInput {
     parentId?: number | null
 }
 
+export interface TreeTask {
+    id: number
+    title: string
+    priority: TaskPriority
+    finishedAt: string | null
+    deadline: string | null
+    parentId: number | null
+}
+
+export interface TodoTreeResponse {
+    id: number
+    name: string
+    tasks: TreeTask[]
+}
+
 export interface SimpleTaskPatchInput {
     title?: string
     description?: string

@@ -855,3 +855,142 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* ── View tabs (list / tree) ─────────────────── */
+
+.view-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    width: fit-content;
+    margin-bottom: 12px;
+}
+
+.view-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 5px;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+
+.view-tab:hover {
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.view-tab.active {
+    background: var(--navy);
+    color: #fff;
+}
+
+/* ── Tree view ───────────────────────────────── */
+
+.tree-view {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.tree-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    position: relative;
+}
+
+.tree-row:last-child {
+    border-bottom: none;
+}
+
+.tree-row:hover {
+    background: var(--surface-2);
+}
+
+.tree-row.finished {
+    opacity: 0.5;
+}
+
+.tree-row.finished .tree-title {
+    text-decoration: line-through;
+}
+
+.tree-priority-bar {
+    flex-shrink: 0;
+    width: 3px;
+    height: 32px;
+    border-radius: 2px;
+    margin-right: 2px;
+}
+
+.tree-collapse-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0;
+    transition:
+        background 0.1s,
+        color 0.1s;
+}
+
+.tree-collapse-btn:hover {
+    background: var(--border);
+    color: var(--ink);
+}
+
+.tree-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tree-title:hover {
+    color: var(--pink);
+    text-decoration: underline;
+}
+
+.tree-deadline {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.tree-deadline.overdue {
+    color: var(--p-crit);
+    font-weight: 600;
+}
+
+.tree-children {
+    border-left: 1px solid var(--border);
+}

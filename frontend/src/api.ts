@@ -3,6 +3,7 @@ import type {
     SimpleTask,
     SimpleTaskInput,
     SimpleTaskPatchInput,
+    TodoTreeResponse,
 } from './types'
 
 const BASE = '/api/v1'
@@ -71,3 +72,6 @@ export const deleteSimpleTask = (id: number) =>
 
 export const finishSimpleTask = (id: number) =>
     request<void>(`/simple-task/finish/${id}`, { method: 'POST' })
+
+export const getTableTree = (tableId: number) =>
+    request<TodoTreeResponse>(`/todo-table/tree/${tableId}`)
