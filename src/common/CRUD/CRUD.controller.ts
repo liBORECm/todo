@@ -55,6 +55,7 @@ export default abstract class CRUDController<
                 )
                 return res.status(200).json(result)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
@@ -73,6 +74,7 @@ export default abstract class CRUDController<
                 }
                 return res.status(200).json(result)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
@@ -102,6 +104,7 @@ export default abstract class CRUDController<
                 }
                 return res.status(200).json(patchedRecord)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
@@ -123,6 +126,7 @@ export default abstract class CRUDController<
 
                 return res.status(200).json(created)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 
@@ -145,6 +149,7 @@ export default abstract class CRUDController<
 
                 return res.sendStatus(200)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 

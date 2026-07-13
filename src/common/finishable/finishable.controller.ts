@@ -25,6 +25,7 @@ export default abstract class FinishableController<
                 const finished = await this.service.finish(id)
                 return res.status(200).json(finished)
             } catch (e) {
+                console.log(e)
                 if (isHttpError(e))
                     return res.status(e.status).json({ error: e.message })
 

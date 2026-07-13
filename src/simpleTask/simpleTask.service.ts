@@ -52,7 +52,7 @@ class SimpleTaskService extends FinishableService<SimpleTaskBase, SimpleTask> {
 
     public create(record: SimpleTask): Promise<SimpleTaskBase> {
         return super.create(record, async () => {
-            if (record.parentId !== null) {
+            if (record.parentId !== null && record.parentId !== undefined) {
                 if (
                     ((await this.get(record.parentId)) === undefined) ===
                     undefined
