@@ -5,6 +5,7 @@ import TodoTableFormPage from './pages/TodoTableFormPage'
 import TasksPage from './pages/TasksPage'
 import TaskViewPage from './pages/TaskViewPage'
 import TaskFormPage from './pages/TaskFormPage'
+import RepeatedTaskFormPage from './pages/RepeatedTaskFormPage'
 
 function Navbar() {
     return (
@@ -35,6 +36,14 @@ export default function App() {
                     <Route path="/tasks/create" element={<TaskFormPage />} />
                     <Route path="/tasks/:id" element={<TaskViewPage />} />
                     <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
+                    <Route
+                        path="/repeated-task/create"
+                        element={<RepeatedTaskFormPage />}
+                    />
+                    <Route
+                        path="/repeated-task/:id/edit"
+                        element={<RepeatedTaskFormPage />}
+                    />
                 </Routes>
             </div>
             <Toaster

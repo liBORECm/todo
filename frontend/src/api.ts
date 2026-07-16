@@ -4,6 +4,9 @@ import type {
     SimpleTaskInput,
     SimpleTaskPatchInput,
     TodoTreeResponse,
+    RepeatedTask,
+    RepeatedTaskInput,
+    RepeatedTaskPatchInput,
 } from './types'
 
 const BASE = '/api/v1'
@@ -75,3 +78,24 @@ export const finishSimpleTask = (id: number) =>
 
 export const getTableTree = (tableId: number) =>
     request<TodoTreeResponse>(`/todo-table/tree/${tableId}`)
+
+export const getRepeatedTasks = (tableId: number) =>
+    request<RepeatedTask[]>(`/repeated-task?tableId=${tableId}&limit=1000`)
+
+export const getRepeatedTask = (id: number) =>
+    request<RepeatedTask>(`/repeated-task/${id}`)
+
+export const createRepeatedTask = (data: RepeatedTaskInput) =>
+    request<RepeatedTask>('/repeated-task', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    })
+
+export const updateRepeatedTask = (id: number, data: RepeatedTaskPatchInput) =>
+    request<RepeatedTask>(`/repeated-task/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+    })
+
+export const deleteRepeatedTask = (id: number) =>
+    request<void>(`/repeated-task/${id}`, { method: 'DELETE' })

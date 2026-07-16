@@ -35,6 +35,36 @@ export interface SimpleTaskInput {
     parentId?: number | null
 }
 
+export interface RepeatedTask {
+    id: number
+    tableId: number
+    title: string
+    description: string | null
+    priority: TaskPriority
+    cron: string
+    duration: number
+    createdAt: string
+    updatedAt: string
+    deletedAt: string | null
+}
+
+export interface RepeatedTaskInput {
+    tableId: number
+    title: string
+    description?: string
+    priority?: TaskPriority
+    cron: string
+    duration: number
+}
+
+export interface RepeatedTaskPatchInput {
+    title?: string
+    description?: string
+    priority?: TaskPriority
+    cron?: string
+    duration?: number
+}
+
 export interface TreeTask {
     id: number
     title: string

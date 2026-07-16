@@ -994,3 +994,81 @@ body {
 .tree-children {
     border-left: 1px solid var(--border);
 }
+
+/* ── Cron editor ─────────────────────────────── */
+
+.cron-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.cron-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cron-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cron-day-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.cron-day-pill {
+    padding: 5px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.12s,
+        border-color 0.12s,
+        color 0.12s;
+}
+
+.cron-day-pill:hover {
+    border-color: var(--navy);
+}
+
+.cron-day-pill.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
+}
+
+.cron-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.cron-preview-label {
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+.cron-preview-text {
+    color: var(--ink);
+}

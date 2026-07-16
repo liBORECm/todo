@@ -1,14 +1,25 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import type { SimpleTaskBase, TodoTable, TreeTask } from '../types'
-import { getTodoTable, getSimpleTasks, getTableTree } from '../api'
+import type {
+    SimpleTaskBase,
+    TodoTable,
+    TreeTask,
+    RepeatedTask,
+} from '../types'
+import {
+    getTodoTable,
+    getSimpleTasks,
+    getTableTree,
+    getRepeatedTasks,
+} from '../api'
 import TaskItem from '../components/TaskItem'
 import SortBar, { type SortField, type SortDir } from '../components/SortBar'
 import TreeView from '../components/TreeView'
+import RepeatedTaskItem from '../components/RepeatedTaskItem'
 import { sortTasks } from '../utils/sort'
 
-type ViewMode = 'list' | 'tree'
+type ViewMode = 'list' | 'tree' | 'repeated'
 
 const IconList = () => (
     <svg
@@ -47,20 +58,44 @@ const IconTree = () => (
     </svg>
 )
 
+const IconRepeat = () => (
+    <svg
+        width="15"
+        height="15"
+        viewBox="0 0 15 15"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    >
+        <polyline points="1,4 4,1 7,4" />
+        <path d="M4,1 L4,9 C4,11.2 5.8,13 8,13 L11,13" />
+        <polyline points="8,11 11,14 14,11" />
+        <path d="M11,14 L11,6 C11,3.8 9.2,2 7,2 L4,2" />
+    </svg>
+)
+
 export default function TasksPage() {
     const { id } = useParams<{ id: string }>()
     const tableId = Number(id)
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
 
     const [table, setTable] = useState<TodoTable | null>(null)
     const [tasks, setTasks] = useState<SimpleTaskBase[]>([])
     const [treeTasks, setTreeTasks] = useState<TreeTask[]>([])
+    const [repeatedTasks, setRepeatedTasks] = useState<RepeatedTask[]>([])
     const [loading, setLoading] = useState(true)
     const [treeLoading, setTreeLoading] = useState(false)
+    const [repeatedLoading, setRepeatedLoading] = useState(false)
     const [showFinished, setShowFinished] = useState(false)
     const [sortField, setSortField] = useState<SortField>('createdAt')
     const [sortDir, setSortDir] = useState<SortDir>('desc')
-    const [viewMode, setViewMode] = useState<ViewMode>('list')
+    const initialTab = (searchParams.get('tab') as ViewMode) ?? 'list'
+    const [viewMode, setViewMode] = useState<ViewMode>(
+        ['list', 'tree', 'repeated'].includes(initialTab) ? initialTab : 'list',
+    )
 
     const loadList = useCallback(async () => {
         try {
@@ -96,22 +131,44 @@ export default function TasksPage() {
         }
     }, [tableId])
 
+    const loadRepeated = useCallback(async () => {
+        setRepeatedLoading(true)
+        try {
+            const data = await getRepeatedTasks(tableId)
+            setRepeatedTasks(data)
+        } catch (err) {
+            toast.error((err as Error).message)
+        } finally {
+            setRepeatedLoading(false)
+        }
+    }, [tableId])
+
     useEffect(() => {
         loadList()
     }, [loadList])
 
-    const switchMode = (mode: ViewMode) => {
-        setViewMode(mode)
-        if (mode === 'tree' && treeTasks.length === 0) loadTree()
-    }
+    useEffect(() => {
+        if (viewMode === 'tree' && treeTasks.length === 0) loadTree()
+        if (viewMode === 'repeated' && repeatedTasks.length === 0)
+            loadRepeated()
+    }, [viewMode]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    const switchMode = (mode: ViewMode) => setViewMode(mode)
 
     const refresh = () => {
         loadList()
         if (viewMode === 'tree') loadTree()
+        if (viewMode === 'repeated') loadRepeated()
     }
 
     const filtered = showFinished ? tasks : tasks.filter((t) => !t.finishedAt)
     const visible = sortTasks(filtered, sortField, sortDir)
+
+    const newButtonLabel = viewMode === 'repeated' ? 'New repeated' : 'New task'
+    const newButtonHref =
+        viewMode === 'repeated'
+            ? `/repeated-task/create?tableId=${tableId}`
+            : `/tasks/create?tableId=${tableId}`
 
     return (
         <div className="page">
@@ -134,7 +191,7 @@ export default function TasksPage() {
                 <h1 className="page-title">{table?.name ?? '…'}</h1>
                 <button
                     className="btn btn-primary"
-                    onClick={() => navigate(`/tasks/create?tableId=${tableId}`)}
+                    onClick={() => navigate(newButtonHref)}
                 >
                     <svg
                         width="12"
@@ -148,7 +205,7 @@ export default function TasksPage() {
                         <line x1="6" y1="1" x2="6" y2="11" />
                         <line x1="1" y1="6" x2="11" y2="6" />
                     </svg>
-                    New task
+                    {newButtonLabel}
                 </button>
             </div>
 
@@ -173,43 +230,51 @@ export default function TasksPage() {
                         >
                             <IconTree />
                         </button>
-                    </div>
-
-                    <div className="controls-row">
                         <button
-                            className={`toggle-chip${showFinished ? ' active' : ''}`}
-                            onClick={() => setShowFinished((s) => !s)}
+                            className={`view-tab${viewMode === 'repeated' ? ' active' : ''}`}
+                            onClick={() => switchMode('repeated')}
+                            title="Repeated tasks"
                         >
-                            {showFinished && (
-                                <svg
-                                    width="11"
-                                    height="11"
-                                    viewBox="0 0 11 11"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <polyline points="1.5,5.5 4,8.5 9.5,2.5" />
-                                </svg>
-                            )}
-                            Finished
+                            <IconRepeat />
                         </button>
-
-                        {viewMode === 'list' && (
-                            <SortBar
-                                field={sortField}
-                                dir={sortDir}
-                                onField={setSortField}
-                                onDir={() =>
-                                    setSortDir((d) =>
-                                        d === 'asc' ? 'desc' : 'asc',
-                                    )
-                                }
-                            />
-                        )}
                     </div>
+
+                    {viewMode !== 'repeated' && (
+                        <div className="controls-row">
+                            <button
+                                className={`toggle-chip${showFinished ? ' active' : ''}`}
+                                onClick={() => setShowFinished((s) => !s)}
+                            >
+                                {showFinished && (
+                                    <svg
+                                        width="11"
+                                        height="11"
+                                        viewBox="0 0 11 11"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2.2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <polyline points="1.5,5.5 4,8.5 9.5,2.5" />
+                                    </svg>
+                                )}
+                                Finished
+                            </button>
+                            {viewMode === 'list' && (
+                                <SortBar
+                                    field={sortField}
+                                    dir={sortDir}
+                                    onField={setSortField}
+                                    onDir={() =>
+                                        setSortDir((d) =>
+                                            d === 'asc' ? 'desc' : 'asc',
+                                        )
+                                    }
+                                />
+                            )}
+                        </div>
+                    )}
 
                     {viewMode === 'list' ? (
                         visible.length === 0 ? (
@@ -237,16 +302,40 @@ export default function TasksPage() {
                                 ))}
                             </div>
                         )
-                    ) : treeLoading ? (
+                    ) : viewMode === 'tree' ? (
+                        treeLoading ? (
+                            <div className="spinner-wrap">
+                                <div className="spinner" />
+                            </div>
+                        ) : (
+                            <TreeView
+                                tasks={treeTasks}
+                                showFinished={showFinished}
+                                onRefresh={refresh}
+                            />
+                        )
+                    ) : repeatedLoading ? (
                         <div className="spinner-wrap">
                             <div className="spinner" />
                         </div>
+                    ) : repeatedTasks.length === 0 ? (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">🔁</div>
+                            <div className="empty-state-title">
+                                No repeated tasks
+                            </div>
+                            <p>Add a repeated task to define recurring work.</p>
+                        </div>
                     ) : (
-                        <TreeView
-                            tasks={treeTasks}
-                            showFinished={showFinished}
-                            onRefresh={refresh}
-                        />
+                        <div className="task-list-card">
+                            {repeatedTasks.map((task) => (
+                                <RepeatedTaskItem
+                                    key={task.id}
+                                    task={task}
+                                    onRefresh={loadRepeated}
+                                />
+                            ))}
+                        </div>
                     )}
                 </>
             )}
