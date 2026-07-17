@@ -20,7 +20,7 @@ WORKDIR /app
 
 # Install production deps only (ts-node + typescript are production deps — needed for migrations)
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --ignore-scripts
 
 # Compiled backend
 COPY --from=builder /app/dist ./dist
