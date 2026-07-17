@@ -4,7 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "npm run build && node dist/server.js",
+        "start": "npx knex migrate:latest && pm2 start dist/server.js --name thorns-todo",
+        "stop": "pm2 stop thorns-todo",
+        "logs": "pm2 logs thorns-todo",
         "build": "cd frontend && npm run build && cd .. && npm run swagger && tsc -p .",
         "dev": "nodemon src/server.ts",
         "prepare": "husky",
