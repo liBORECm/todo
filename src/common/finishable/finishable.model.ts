@@ -5,8 +5,8 @@ export abstract class FinishalbeEntity extends CRUDEntity {
         public id: number,
         public createdAt: Date,
         public updatedAt: Date,
-        public deletedAt: Date,
-        public finishedAt: Date,
+        public deletedAt: Date | null,
+        public finishedAt: Date | null,
     ) {
         super(id, createdAt, updatedAt, deletedAt)
     }
