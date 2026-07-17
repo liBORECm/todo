@@ -35,6 +35,19 @@ export interface SimpleTaskInput {
     parentId?: number | null
 }
 
+export interface RTaskInstance {
+    id: number
+    tableId: number
+    title: string
+    description: string | null
+    priority: TaskPriority
+    deadline: string | null
+    finishedAt: string | null
+    createdAt: string
+    updatedAt: string
+    deletedAt: string | null
+}
+
 export interface RepeatedTask {
     id: number
     tableId: number

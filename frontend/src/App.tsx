@@ -6,6 +6,7 @@ import TasksPage from './pages/TasksPage'
 import TaskViewPage from './pages/TaskViewPage'
 import TaskFormPage from './pages/TaskFormPage'
 import RepeatedTaskFormPage from './pages/RepeatedTaskFormPage'
+import RTaskViewPage from './pages/RTaskViewPage'
 
 function Navbar() {
     return (
@@ -44,6 +45,7 @@ export default function App() {
                         path="/repeated-task/:id/edit"
                         element={<RepeatedTaskFormPage />}
                     />
+                    <Route path="/r-tasks/:id" element={<RTaskViewPage />} />
                 </Routes>
             </div>
             <Toaster

@@ -7,6 +7,7 @@ import type {
     RepeatedTask,
     RepeatedTaskInput,
     RepeatedTaskPatchInput,
+    RTaskInstance,
 } from './types'
 
 const BASE = '/api/v1'
@@ -99,3 +100,15 @@ export const updateRepeatedTask = (id: number, data: RepeatedTaskPatchInput) =>
 
 export const deleteRepeatedTask = (id: number) =>
     request<void>(`/repeated-task/${id}`, { method: 'DELETE' })
+
+export const getRTaskInstances = (tableId: number) =>
+    request<RTaskInstance[]>(`/r-task-instances?tableId=${tableId}&limit=1000`)
+
+export const getRTaskInstance = (id: number) =>
+    request<RTaskInstance>(`/r-task-instances/${id}`)
+
+export const deleteRTaskInstance = (id: number) =>
+    request<void>(`/r-task-instances/${id}`, { method: 'DELETE' })
+
+export const finishRTaskInstance = (id: number) =>
+    request<void>(`/r-task-instances/finish/${id}`, { method: 'POST' })

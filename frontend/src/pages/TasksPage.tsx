@@ -6,17 +6,20 @@ import type {
     TodoTable,
     TreeTask,
     RepeatedTask,
+    RTaskInstance,
 } from '../types'
 import {
     getTodoTable,
     getSimpleTasks,
     getTableTree,
     getRepeatedTasks,
+    getRTaskInstances,
 } from '../api'
 import TaskItem from '../components/TaskItem'
 import SortBar, { type SortField, type SortDir } from '../components/SortBar'
 import TreeView from '../components/TreeView'
 import RepeatedTaskItem from '../components/RepeatedTaskItem'
+import RTaskItem from '../components/RTaskItem'
 import { sortTasks } from '../utils/sort'
 
 type ViewMode = 'list' | 'tree' | 'repeated'
@@ -86,9 +89,11 @@ export default function TasksPage() {
     const [tasks, setTasks] = useState<SimpleTaskBase[]>([])
     const [treeTasks, setTreeTasks] = useState<TreeTask[]>([])
     const [repeatedTasks, setRepeatedTasks] = useState<RepeatedTask[]>([])
+    const [rTaskInstances, setRTaskInstances] = useState<RTaskInstance[]>([])
     const [loading, setLoading] = useState(true)
     const [treeLoading, setTreeLoading] = useState(false)
     const [repeatedLoading, setRepeatedLoading] = useState(false)
+    const [rTaskLoading, setRTaskLoading] = useState(false)
     const [showFinished, setShowFinished] = useState(false)
     const [sortField, setSortField] = useState<SortField>('createdAt')
     const [sortDir, setSortDir] = useState<SortDir>('desc')
@@ -143,9 +148,22 @@ export default function TasksPage() {
         }
     }, [tableId])
 
+    const loadRTasks = useCallback(async () => {
+        setRTaskLoading(true)
+        try {
+            const data = await getRTaskInstances(tableId)
+            setRTaskInstances(data)
+        } catch (err) {
+            toast.error((err as Error).message)
+        } finally {
+            setRTaskLoading(false)
+        }
+    }, [tableId])
+
     useEffect(() => {
         loadList()
-    }, [loadList])
+        loadRTasks()
+    }, [loadList, loadRTasks])
 
     useEffect(() => {
         if (viewMode === 'tree' && treeTasks.length === 0) loadTree()
@@ -157,6 +175,7 @@ export default function TasksPage() {
 
     const refresh = () => {
         loadList()
+        loadRTasks()
         if (viewMode === 'tree') loadTree()
         if (viewMode === 'repeated') loadRepeated()
     }
@@ -277,31 +296,74 @@ export default function TasksPage() {
                     )}
 
                     {viewMode === 'list' ? (
-                        visible.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-state-icon">✅</div>
-                                <div className="empty-state-title">
-                                    {showFinished
-                                        ? 'No tasks yet'
-                                        : 'All caught up!'}
+                        <>
+                            {visible.length === 0 ? (
+                                <div className="empty-state">
+                                    <div className="empty-state-icon">✅</div>
+                                    <div className="empty-state-title">
+                                        {showFinished
+                                            ? 'No tasks yet'
+                                            : 'All caught up!'}
+                                    </div>
+                                    <p>
+                                        {tasks.length > 0 && !showFinished
+                                            ? 'All tasks are finished. Toggle to see them.'
+                                            : 'Add a task to get started.'}
+                                    </p>
                                 </div>
-                                <p>
-                                    {tasks.length > 0 && !showFinished
-                                        ? 'All tasks are finished. Toggle to see them.'
-                                        : 'Add a task to get started.'}
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="task-list-card">
-                                {visible.map((task) => (
-                                    <TaskItem
-                                        key={task.id}
-                                        task={task}
-                                        onRefresh={refresh}
-                                    />
-                                ))}
-                            </div>
-                        )
+                            ) : (
+                                <div className="task-list-card">
+                                    {visible.map((task) => (
+                                        <TaskItem
+                                            key={task.id}
+                                            task={task}
+                                            onRefresh={refresh}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+
+                            {(() => {
+                                const visibleRTasks = rTaskLoading
+                                    ? []
+                                    : showFinished
+                                      ? rTaskInstances
+                                      : rTaskInstances.filter(
+                                            (t) => !t.finishedAt,
+                                        )
+                                if (rTaskLoading || visibleRTasks.length > 0)
+                                    return (
+                                        <>
+                                            <div className="section-divider">
+                                                <span>Recurring instances</span>
+                                            </div>
+                                            {rTaskLoading ? (
+                                                <div
+                                                    className="spinner-wrap"
+                                                    style={{ padding: '24px' }}
+                                                >
+                                                    <div className="spinner" />
+                                                </div>
+                                            ) : (
+                                                <div className="task-list-card">
+                                                    {visibleRTasks.map(
+                                                        (task) => (
+                                                            <RTaskItem
+                                                                key={task.id}
+                                                                task={task}
+                                                                onRefresh={
+                                                                    loadRTasks
+                                                                }
+                                                            />
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                        </>
+                                    )
+                                return null
+                            })()}
+                        </>
                     ) : viewMode === 'tree' ? (
                         treeLoading ? (
                             <div className="spinner-wrap">
