@@ -1,7 +1,7 @@
 import { FinishalbeEntity } from '../common/finishable/finishable.model'
 import { RepeatedTask } from '../repeatedTask/repeatedTask.model'
 
-export class RTaskInstanceBase extends FinishalbeEntity {
+export class RTaskInstance extends FinishalbeEntity {
     constructor(
         public id: number,
         public createdAt: Date,
@@ -23,7 +23,7 @@ export class RTaskInstanceBase extends FinishalbeEntity {
  * @swagger
  * components:
  *  schemas:
- *      RTaskInstanceBase:
+ *      RTaskInstance:
  *          type: object
  *          required:
  *              - id
