@@ -7,11 +7,26 @@ export class RepeatedTaskService extends CRUDService<
     RepeatedTask,
     RepeatedTask
 > {
-    public create(
+    private onMutated: (() => void) | null = null
+
+    public registerMutationHook(cb: () => void) {
+        this.onMutated = cb
+    }
+
+    public async delete(
+        id: number,
+        approveDelete?: () => Promise<void>,
+    ): Promise<boolean> {
+        const result = await super.delete(id, approveDelete)
+        this.onMutated?.()
+        return result
+    }
+
+    public async create(
         record: RepeatedTask,
         approveCreate?: () => Promise<void>,
     ): Promise<RepeatedTask> {
-        return super.create(record, async () => {
+        const result = await super.create(record, async () => {
             const cron = record.cron
             if (cron.split(' ').length !== 5) throw new HttpError(InvaliadCRON)
 
@@ -24,14 +39,16 @@ export class RepeatedTaskService extends CRUDService<
             if (Math.round(record.duration) !== record.duration)
                 throw new HttpError(InvalidDuration)
         })
+        this.onMutated?.()
+        return result
     }
 
-    public edit(
+    public async edit(
         id: number,
         record: RepeatedTask,
         approveEdit?: () => Promise<void>,
     ): Promise<RepeatedTask> {
-        return super.edit(id, record, async () => {
+        const result = await super.edit(id, record, async () => {
             const cron = record.cron
             if (cron !== undefined) {
                 if (cron.split(' ').length !== 5)
@@ -50,6 +67,8 @@ export class RepeatedTaskService extends CRUDService<
                     throw new HttpError(InvalidDuration)
             }
         })
+        this.onMutated?.()
+        return result
     }
 }
 
