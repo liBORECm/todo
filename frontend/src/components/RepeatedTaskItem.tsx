@@ -53,7 +53,21 @@ export default function RepeatedTaskItem({ task, onRefresh }: Props) {
                         <span className="task-deadline">
                             {readableCron(task.cron)}
                         </span>
-                        <span className="task-deadline">{task.duration}d</span>
+                        <span className="badge badge-duration">
+                            <svg
+                                width="10"
+                                height="10"
+                                viewBox="0 0 10 10"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                            >
+                                <circle cx="5" cy="5" r="4" />
+                                <polyline points="5,2.5 5,5 6.5,6.5" />
+                            </svg>
+                            {task.duration}d
+                        </span>
                     </div>
                 </div>
 

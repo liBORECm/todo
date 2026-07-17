@@ -349,6 +349,12 @@ body {
     flex-shrink: 0;
 }
 
+.badge-duration {
+    background: rgba(27, 29, 64, 0.06);
+    border-color: rgba(27, 29, 64, 0.15);
+    color: var(--navy);
+}
+
 .task-deadline {
     font-size: 11px;
     font-weight: 500;
