@@ -1,0 +1,40 @@
+services:
+    db:
+        image: mysql:8
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PWD:-secret}
+            MYSQL_DATABASE: ${DB_NAME:-todo}
+        volumes:
+            - mysql_data:/var/lib/mysql
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'mysqladmin',
+                    'ping',
+                    '-h',
+                    'localhost',
+                    '-u',
+                    'root',
+                    '-p${DB_PWD:-secret}',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 12
+
+    app:
+        build: .
+        ports:
+            - '${PORT:-5533}:5533'
+        environment:
+            PORT: 5533
+            DB_HOST: db
+            DB_NAME: ${DB_NAME:-todo}
+            DB_USER: root
+            DB_PWD: ${DB_PWD:-secret}
+        depends_on:
+            db:
+                condition: service_healthy
+
+volumes:
+    mysql_data:
