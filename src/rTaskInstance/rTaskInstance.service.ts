@@ -19,7 +19,7 @@ export class RTaskInstanceService extends FinishableService<
     }
 
     async instantiate() {
-        for (const job of this.jobs.values()) {
+        for (const job of this.jobs) {
             job.stop()
         }
         this.jobs = []
