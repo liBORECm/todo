@@ -9,31 +9,11 @@ export class RTaskInstanceBase extends FinishalbeEntity {
         public deletedAt: Date | null,
         public finishedAt: Date | null,
         public tableId: number,
-        public repeatedTaskId: number,
+        public title: string,
+        public description: string | null,
+        public priority: TaskPriority,
+        public deadline: Date | null,
     ) {
         super(id, createdAt, updatedAt, deletedAt, finishedAt)
-    }
-}
-
-export class RTaskInstance extends RTaskInstanceBase {
-    constructor(
-        public id: number,
-        public createdAt: Date,
-        public updatedAt: Date,
-        public deletedAt: Date | null,
-        public finishedAt: Date | null,
-        public tableId: number,
-        public repeatedTaskId: number,
-        public repeatedTask: RepeatedTask,
-    ) {
-        super(
-            id,
-            createdAt,
-            updatedAt,
-            deletedAt,
-            finishedAt,
-            tableId,
-            repeatedTaskId,
-        )
     }
 }
