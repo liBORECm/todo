@@ -17,3 +17,86 @@ export class RTaskInstanceBase extends FinishalbeEntity {
         super(id, createdAt, updatedAt, deletedAt, finishedAt)
     }
 }
+
+// #region AI-GENERATED SWAGGER
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      RTaskInstanceBase:
+ *          type: object
+ *          required:
+ *              - id
+ *              - tableId
+ *              - createdAt
+ *              - updatedAt
+ *              - title
+ *              - priority
+ *          properties:
+ *              id:
+ *                  type: number
+ *              tableId:
+ *                  type: number
+ *              createdAt:
+ *                  type: string
+ *                  format: date-time
+ *              updatedAt:
+ *                  type: string
+ *                  format: date-time
+ *              deletedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *              finishedAt:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *                  nullable: true
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *
+ *      RTaskInstanceInput:
+ *          type: object
+ *          required:
+ *              - tableId
+ *              - title
+ *          properties:
+ *              tableId:
+ *                  type: number
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *                  nullable: true
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *
+ *      RTaskInstancePatchInput:
+ *          type: object
+ *          properties:
+ *              title:
+ *                  type: string
+ *              description:
+ *                  type: string
+ *                  nullable: true
+ *              priority:
+ *                  $ref: '#/components/schemas/TaskPriority'
+ *              deadline:
+ *                  type: string
+ *                  format: date-time
+ *                  nullable: true
+ *
+ */
+// #endregion
