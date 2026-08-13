@@ -81,7 +81,7 @@ export const finishSimpleTask = (id: number) =>
     request<void>(`/simple-task/finish/${id}`, { method: 'POST' })
 
 export const getTableTree = (tableId: number) =>
-    request<TodoTreeResponse>(`/todo-table/tree/${tableId}`)
+    request<TodoTreeResponse>(`/todo-table/tree/${tableId}?tableId=${tableId}`)
 
 export const getRepeatedTasks = (tableId: number) =>
     request<RepeatedTask[]>(`/repeated-task?tableId=${tableId}&limit=1000`)
