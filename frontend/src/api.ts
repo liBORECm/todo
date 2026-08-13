@@ -56,6 +56,9 @@ export const deleteTodoTable = (id: number) =>
 export const getSimpleTasks = (params?: { limit?: number }) =>
     request<SimpleTask[]>(`/simple-task?limit=${params?.limit ?? 1000}`)
 
+export const getSimpleTasksByTable = (tableId: number) =>
+    request<SimpleTask[]>(`/simple-task?tableId=${tableId}&limit=1000`)
+
 export const getSimpleTask = (id: number) =>
     request<SimpleTask>(`/simple-task/${id}`)
 

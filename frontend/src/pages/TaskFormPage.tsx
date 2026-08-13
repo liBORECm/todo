@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import type { TaskPriority } from '../types'
-import { getSimpleTask, createSimpleTask, updateSimpleTask } from '../api'
+import type { TaskPriority, SimpleTaskBase } from '../types'
+import {
+    getSimpleTask,
+    createSimpleTask,
+    updateSimpleTask,
+    getSimpleTasksByTable,
+} from '../api'
+import ParentTaskSelect from '../components/ParentTaskSelect'
 
 function toInputDate(iso: string | null | undefined): string {
     if (!iso) return ''
@@ -31,6 +37,14 @@ export default function TaskFormPage() {
     const [resolvedParentId, setResolvedParentId] = useState<number | null>(
         parentIdParam,
     )
+    const [tableTasks, setTableTasks] = useState<SimpleTaskBase[]>([])
+
+    useEffect(() => {
+        if (isEdit || !resolvedTableId) return
+        getSimpleTasksByTable(resolvedTableId)
+            .then(setTableTasks)
+            .catch((err) => toast.error((err as Error).message))
+    }, [isEdit, resolvedTableId])
 
     useEffect(() => {
         if (!isEdit) return
@@ -158,6 +172,17 @@ export default function TaskFormPage() {
                             placeholder="Optional details…"
                         />
                     </div>
+
+                    {!isEdit && (
+                        <div className="form-group">
+                            <label className="form-label">Parent task</label>
+                            <ParentTaskSelect
+                                tasks={tableTasks}
+                                value={resolvedParentId}
+                                onChange={setResolvedParentId}
+                            />
+                        </div>
+                    )}
 
                     <div
                         style={{
