@@ -17,7 +17,7 @@ export default function TodoTableFormPage() {
     const isEdit = !!id
     const navigate = useNavigate()
     const [name, setName] = useState('')
-    const [loading, setLoading] = useState(isEdit)
+    const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [connectedUsers, setConnectedUsers] = useState<User[]>([])
     const [allUsers, setAllUsers] = useState<User[]>([])
@@ -43,8 +43,9 @@ export default function TodoTableFormPage() {
     }, [id])
 
     useEffect(() => {
-        if (!isEdit) return
-        Promise.all([loadTable(), getUsers().then(setAllUsers)])
+        const tasks = [getUsers().then(setAllUsers)]
+        if (isEdit) tasks.push(loadTable())
+        Promise.all(tasks)
             .catch((err) => {
                 toast.error((err as Error).message)
                 navigate('/')
@@ -56,14 +57,23 @@ export default function TodoTableFormPage() {
         (u) => !connectedUsers.some((c) => c.id === u.id),
     )
 
+    const addTableToUser = async (userId: number, tableId: number) => {
+        const existingTables = await getUserTodoTables(userId)
+        const tableIds = Array.from(
+            new Set([...existingTables.map((t) => t.id), tableId]),
+        )
+        await setUserTodoTables(userId, tableIds)
+    }
+
     const handleConnect = async (userId: number) => {
+        if (!isEdit) {
+            const user = allUsers.find((u) => u.id === userId)
+            if (user) setConnectedUsers((prev) => [...prev, user])
+            return
+        }
         setConnectingId(userId)
         try {
-            const existingTables = await getUserTodoTables(userId)
-            const tableIds = Array.from(
-                new Set([...existingTables.map((t) => t.id), Number(id)]),
-            )
-            await setUserTodoTables(userId, tableIds)
+            await addTableToUser(userId, Number(id))
             await loadTable()
             toast.success('User connected.')
         } catch (err) {
@@ -71,6 +81,10 @@ export default function TodoTableFormPage() {
         } finally {
             setConnectingId(null)
         }
+    }
+
+    const handleUnstageUser = (userId: number) => {
+        setConnectedUsers((prev) => prev.filter((u) => u.id !== userId))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +99,10 @@ export default function TodoTableFormPage() {
                 await updateTodoTable(Number(id), { name: name.trim() })
                 toast.success('Table updated.')
             } else {
-                await createTodoTable({ name: name.trim() })
+                const created = await createTodoTable({ name: name.trim() })
+                for (const user of connectedUsers) {
+                    await addTableToUser(user.id, created.id)
+                }
                 toast.success('Table created.')
             }
             navigate('/')
@@ -166,83 +183,98 @@ export default function TodoTableFormPage() {
                 </form>
             </div>
 
-            {isEdit && (
-                <div className="form-card connected-users-card">
-                    <div className="connected-users-header">
-                        <span className="form-label">Connected users</span>
-                        <div
-                            className="connect-user-wrapper"
-                            ref={connectWrapperRef}
+            <div className="form-card connected-users-card">
+                <div className="connected-users-header">
+                    <span className="form-label">Connected users</span>
+                    <div
+                        className="connect-user-wrapper"
+                        ref={connectWrapperRef}
+                    >
+                        <button
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            onClick={() => setConnectOpen((o) => !o)}
                         >
-                            <button
-                                type="button"
-                                className="btn btn-ghost btn-sm"
-                                onClick={() => setConnectOpen((o) => !o)}
-                            >
-                                + Connect user
-                            </button>
-                            {connectOpen && (
-                                <div className="connect-user-dropdown">
-                                    {connectableUsers.length === 0 ? (
-                                        <div className="connect-user-empty">
-                                            All users are already connected.
-                                        </div>
-                                    ) : (
-                                        connectableUsers.map((u) => (
-                                            <button
-                                                key={u.id}
-                                                type="button"
-                                                className="connect-user-item"
-                                                onClick={() =>
-                                                    handleConnect(u.id)
-                                                }
-                                                disabled={connectingId === u.id}
+                            + Connect user
+                        </button>
+                        {connectOpen && (
+                            <div className="connect-user-dropdown">
+                                {connectableUsers.length === 0 ? (
+                                    <div className="connect-user-empty">
+                                        All users are already connected.
+                                    </div>
+                                ) : (
+                                    connectableUsers.map((u) => (
+                                        <button
+                                            key={u.id}
+                                            type="button"
+                                            className="connect-user-item"
+                                            onClick={() => handleConnect(u.id)}
+                                            disabled={connectingId === u.id}
+                                        >
+                                            <span
+                                                className="user-chip-avatar"
+                                                style={{
+                                                    background: avatarColor(
+                                                        u.id,
+                                                    ),
+                                                }}
                                             >
-                                                <span
-                                                    className="user-chip-avatar"
-                                                    style={{
-                                                        background: avatarColor(
-                                                            u.id,
-                                                        ),
-                                                    }}
-                                                >
-                                                    {u.name
-                                                        .charAt(0)
-                                                        .toUpperCase()}
-                                                </span>
-                                                {u.name}
-                                                {connectingId === u.id && '…'}
-                                            </button>
-                                        ))
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                                                {u.name.charAt(0).toUpperCase()}
+                                            </span>
+                                            {u.name}
+                                            {connectingId === u.id && '…'}
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+                        )}
                     </div>
-
-                    {connectedUsers.length === 0 ? (
-                        <p className="connected-users-empty">
-                            No users connected yet.
-                        </p>
-                    ) : (
-                        <div className="user-chip-list">
-                            {connectedUsers.map((u) => (
-                                <div key={u.id} className="user-chip">
-                                    <span
-                                        className="user-chip-avatar"
-                                        style={{
-                                            background: avatarColor(u.id),
-                                        }}
-                                    >
-                                        {u.name.charAt(0).toUpperCase()}
-                                    </span>
-                                    {u.name}
-                                </div>
-                            ))}
-                        </div>
-                    )}
                 </div>
-            )}
+
+                {connectedUsers.length === 0 ? (
+                    <p className="connected-users-empty">
+                        No users connected yet.
+                    </p>
+                ) : (
+                    <div className="user-chip-list">
+                        {connectedUsers.map((u) => (
+                            <div key={u.id} className="user-chip">
+                                <span
+                                    className="user-chip-avatar"
+                                    style={{
+                                        background: avatarColor(u.id),
+                                    }}
+                                >
+                                    {u.name.charAt(0).toUpperCase()}
+                                </span>
+                                {u.name}
+                                {!isEdit && (
+                                    <button
+                                        type="button"
+                                        className="user-chip-remove"
+                                        aria-label={`Remove ${u.name}`}
+                                        onClick={() => handleUnstageUser(u.id)}
+                                    >
+                                        <svg
+                                            width="8"
+                                            height="8"
+                                            viewBox="0 0 8 8"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                        >
+                                            <line x1="1" y1="1" x2="7" y2="7" />
+                                            <line x1="7" y1="1" x2="1" y2="7" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

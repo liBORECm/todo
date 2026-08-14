@@ -1392,6 +1392,29 @@ body {
     text-transform: uppercase;
 }
 
+.user-chip-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 2px;
+    transition:
+        background 0.1s,
+        color 0.1s;
+}
+
+.user-chip-remove:hover {
+    background: var(--border);
+    color: var(--danger);
+}
+
 .connect-user-wrapper {
     position: relative;
 }
