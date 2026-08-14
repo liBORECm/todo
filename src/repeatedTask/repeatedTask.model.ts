@@ -1,4 +1,5 @@
 import { CRUDEntity } from '../common/CRUD/CRUD.model'
+import { TaskPriority } from '../simpleTask/simpleTask.model'
 
 export class RepeatedTask extends CRUDEntity {
     constructor(

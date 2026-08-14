@@ -1,5 +1,5 @@
 import { FinishalbeEntity } from '../common/finishable/finishable.model'
-import { RepeatedTask } from '../repeatedTask/repeatedTask.model'
+import { TaskPriority } from '../simpleTask/simpleTask.model'
 
 export class RTaskInstance extends FinishalbeEntity {
     constructor(
