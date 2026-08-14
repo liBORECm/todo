@@ -8,6 +8,22 @@ export interface TodoTable {
     deletedAt: string | null
 }
 
+export interface User {
+    id: number
+    name: string
+    createdAt: string
+    updatedAt: string
+    deletedAt: string | null
+}
+
+export interface UserInput {
+    name: string
+}
+
+export interface TodoTableWithUsers extends TodoTable {
+    users: User[]
+}
+
 export interface SimpleTaskBase {
     id: number
     tableId: number

@@ -1,5 +1,6 @@
 import type {
     TodoTable,
+    TodoTableWithUsers,
     SimpleTask,
     SimpleTaskInput,
     SimpleTaskPatchInput,
@@ -8,6 +9,8 @@ import type {
     RepeatedTaskInput,
     RepeatedTaskPatchInput,
     RTaskInstance,
+    User,
+    UserInput,
 } from './types'
 
 const BASE = '/api/v1'
@@ -36,22 +39,39 @@ export const getTodoTables = () =>
     request<TodoTable[]>('/todo-table?limit=1000')
 
 export const getTodoTable = (id: number) =>
-    request<TodoTable>(`/todo-table/${id}`)
+    request<TodoTableWithUsers>(`/todo-table/${id}`)
 
 export const createTodoTable = (data: { name: string }) =>
-    request<TodoTable>('/todo-table', {
+    request<TodoTableWithUsers>('/todo-table', {
         method: 'POST',
         body: JSON.stringify(data),
     })
 
 export const updateTodoTable = (id: number, data: { name?: string }) =>
-    request<TodoTable>(`/todo-table/${id}`, {
+    request<TodoTableWithUsers>(`/todo-table/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
     })
 
 export const deleteTodoTable = (id: number) =>
     request<void>(`/todo-table/${id}`, { method: 'DELETE' })
+
+export const getUsers = () => request<User[]>('/user?limit=1000')
+
+export const createUser = (data: UserInput) =>
+    request<User>('/user', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    })
+
+export const getUserTodoTables = (userId: number) =>
+    request<TodoTable[]>(`/user/tables/${userId}?limit=1000`)
+
+export const setUserTodoTables = (userId: number, tableIds: number[]) =>
+    request<void>(
+        `/user/setTables/${userId}?tables=${encodeURIComponent(JSON.stringify(tableIds))}`,
+        { method: 'POST' },
+    )
 
 export const getSimpleTasks = (params?: { limit?: number }) =>
     request<SimpleTask[]>(`/simple-task?limit=${params?.limit ?? 1000}`)
