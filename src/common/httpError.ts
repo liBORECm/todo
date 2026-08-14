@@ -28,6 +28,10 @@ export const InvalidDuration: ErrorCase = {
     status: 400,
     message: 'Invalid duration',
 }
+export const BadRequest: ErrorCase = {
+    status: 400,
+    message: 'Bad request',
+}
 
 export default class HttpError extends Error {
     public readonly status: number
