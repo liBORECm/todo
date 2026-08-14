@@ -1,0 +1,190 @@
+import express, { Router } from 'express'
+import CRUDController from '../common/CRUD/CRUD.controller'
+import { CRUDService } from '../common/CRUD/CRUD.service'
+import { User } from './user.model'
+import userService from './user.service'
+
+class UserController extends CRUDController<
+    User,
+    User,
+    CRUDService<User, User>
+> {
+    constructor() {
+        super(userService)
+    }
+
+    public routes(): Router {
+        const router = super.routes()
+
+        const router0 = express.Router()
+        router0.use('/user', router)
+        return router0
+    }
+}
+
+export default new UserController().routes()
+
+// #region AI-GENERATED SWAGGER
+/**
+ * @swagger
+ * /api/v1/user:
+ *  get:
+ *      x-ai-generated: true
+ *      tags:
+ *          - User
+ *      summary: Get all users
+ *      parameters:
+ *          - name: sort
+ *            in: query
+ *            schema:
+ *              type: string
+ *            description: Select an attribute you want result to be sorted by. If you want it sorted descending, add a prefix '-'
+ *          - name: offset
+ *            in: query
+ *            schema:
+ *              type: number
+ *          - name: limit
+ *            in: query
+ *            schema:
+ *              type: number
+ *      responses:
+ *          200:
+ *              description: A list of users.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/User'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *
+ *  post:
+ *      x-ai-generated: true
+ *      tags:
+ *          - User
+ *      summary: Create new user
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/UserInput'
+ *      responses:
+ *          200:
+ *              description: Created user.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *
+ * /api/v1/user/{id}:
+ *  get:
+ *      x-ai-generated: true
+ *      tags:
+ *          - User
+ *      summary: Get one user by id
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            description: Id of a user
+ *            required: true
+ *            schema:
+ *              type: number
+ *      responses:
+ *          200:
+ *              description: Selected user
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          404:
+ *              description: Not found
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *
+ *  patch:
+ *      x-ai-generated: true
+ *      tags:
+ *          - User
+ *      summary: Update a user by id
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            description: Id of a user
+ *            required: true
+ *            schema:
+ *              type: number
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/UserPatchInput'
+ *      responses:
+ *          200:
+ *              description: Updated user
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          404:
+ *              description: Not found
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *
+ *  delete:
+ *      x-ai-generated: true
+ *      tags:
+ *          - User
+ *      summary: Delete a user by id
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            description: Id of a user
+ *            required: true
+ *            schema:
+ *              type: number
+ *      responses:
+ *          200:
+ *              description: User deleted successfully
+ *          404:
+ *              description: Not found
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/NotFoundError'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ */
+// #endregion
