@@ -1,14 +1,14 @@
 import express, { Router } from 'express'
 import CRUDController from '../common/CRUD/CRUD.controller'
-import { TodoTable } from './todoTable.model'
+import { TodoTableBase } from './todoTable.model'
 import todoTableService, { TodoTableService } from './todoTable.service'
 import { CRUDService } from '../common/CRUD/CRUD.service'
 import { Knex } from 'knex'
 import { InternalError, isHttpError } from '../common/httpError'
 
 class todoTableController extends CRUDController<
-    TodoTable,
-    TodoTable,
+    TodoTableBase,
+    TodoTableBase,
     TodoTableService
 > {
     constructor() {
@@ -78,7 +78,7 @@ export default new todoTableController().routes()
  *                      schema:
  *                          type: array
  *                          items:
- *                              $ref: '#/components/schemas/TodoTable'
+ *                              $ref: '#/components/schemas/TodoTableBase'
  *          500:
  *              description: Internal error
  *              content:

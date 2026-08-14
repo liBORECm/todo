@@ -1,11 +1,12 @@
-import { TodoTable, TodoTree } from './todoTable.model'
+import { TodoTable, TodoTableBase, TodoTree } from './todoTable.model'
 import db from '../db'
 import { Knex } from 'knex'
 import { CRUDService } from '../common/CRUD/CRUD.service'
 import simpleTaskService from '../simpleTask/simpleTask.service'
 import { SimpleTask, SimpleTaskShort } from '../simpleTask/simpleTask.model'
+import userService from '../user/user.service'
 
-export class TodoTableService extends CRUDService<TodoTable, TodoTable> {
+export class TodoTableService extends CRUDService<TodoTableBase, TodoTable> {
     public async getTree(
         tableId: number,
         modifier?: Knex.QueryCallbackWithArgs<any, any>,
@@ -29,6 +30,27 @@ export class TodoTableService extends CRUDService<TodoTable, TodoTable> {
             (todotable) => new TodoTree(todotable.id, todotable.name, tasks),
         )
         return table
+    }
+
+    public get(id: number): Promise<TodoTable> {
+        return super.get(id, async (record) => {
+            const userIds = (
+                (await db('users_todo_tables')
+                    .select('user_id')
+                    .where('todo_table_id', record.id)) as { userId: number }[]
+            ).map((record) => record.userId)
+            const users = await userService.getAll((query) =>
+                query.whereIn('id', userIds),
+            )
+            return new TodoTable(
+                record.id,
+                record.createdAt,
+                record.updatedAt,
+                record.deletedAt,
+                record.name,
+                users,
+            )
+        })
     }
 }
 

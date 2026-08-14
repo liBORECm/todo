@@ -2,7 +2,7 @@ import { Knex } from 'knex'
 import { CRUDService } from '../common/CRUD/CRUD.service'
 import db from '../db'
 import { User } from './user.model'
-import { TodoTable } from '../todoTable/todoTable.model'
+import { TodoTableBase } from '../todoTable/todoTable.model'
 import todoTableService from '../todoTable/todoTable.service'
 
 class UserService extends CRUDService<User, User> {
@@ -28,7 +28,7 @@ class UserService extends CRUDService<User, User> {
         if (offset !== undefined) query = query.offset(offset)
         if (limit !== undefined) query = query.limit(limit)
 
-        return (await query) as Array<TodoTable>
+        return (await query) as Array<TodoTableBase>
     }
 
     public async setJoinedTodoTables(userId: number, todoTableIds: number[]) {
