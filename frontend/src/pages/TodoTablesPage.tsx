@@ -2,41 +2,30 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import type { TodoTable } from '../types'
-import { getTodoTables, deleteTodoTable } from '../api'
+import { getUserTodoTables, deleteTodoTable } from '../api'
 import ThreeDotsMenu from '../components/ThreeDotsMenu'
 import ConfirmDialog from '../components/ConfirmDialog'
-
-const AVATAR_COLORS = [
-    '#1b1d40',
-    '#7c3aed',
-    '#0369a1',
-    '#b45309',
-    '#0f766e',
-    '#9d174d',
-    '#4338ca',
-    '#047857',
-]
-
-function avatarColor(id: number) {
-    return AVATAR_COLORS[id % AVATAR_COLORS.length]
-}
+import { avatarColor } from '../utils/avatar'
+import { useUser } from '../context/UserContext'
 
 export default function TodoTablesPage() {
     const navigate = useNavigate()
+    const { userId } = useUser()
     const [tables, setTables] = useState<TodoTable[]>([])
     const [loading, setLoading] = useState(true)
     const [confirmId, setConfirmId] = useState<number | null>(null)
 
     const load = useCallback(async () => {
+        if (userId === undefined) return
         try {
-            const data = await getTodoTables()
+            const data = await getUserTodoTables(userId)
             setTables(data)
         } catch (err) {
             toast.error((err as Error).message)
         } finally {
             setLoading(false)
         }
-    }, [])
+    }, [userId])
 
     useEffect(() => {
         load()

@@ -85,6 +85,10 @@ body {
     color: var(--pink);
 }
 
+.navbar-switch-user {
+    margin-left: auto;
+}
+
 /* ── Page layout ─────────────────────────────── */
 
 .app-layout {
@@ -1243,4 +1247,200 @@ body {
 
 .cron-preview-text {
     color: var(--ink);
+}
+
+/* ── User selection (profile picker) ─────────── */
+
+.profile-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 40px 24px;
+    background: var(--bg);
+}
+
+.profile-heading {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 36px;
+}
+
+.profile-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    max-width: 720px;
+}
+
+.profile-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    padding: 4px;
+    width: 108px;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    font-size: 32px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    border: 3px solid transparent;
+    transition:
+        border-color 0.15s,
+        transform 0.15s;
+}
+
+.profile-tile:hover .profile-avatar {
+    border-color: var(--pink);
+    transform: translateY(-2px);
+}
+
+.profile-avatar-add {
+    background: var(--surface);
+    border: 2px dashed var(--faint);
+    color: var(--muted);
+}
+
+.profile-tile:hover .profile-avatar-add {
+    border-color: var(--pink);
+    border-style: dashed;
+    color: var(--pink);
+}
+
+.profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.profile-tile:hover .profile-name {
+    color: var(--ink);
+}
+
+/* ── Connected users (todo table form) ───────── */
+
+.connected-users-card {
+    margin-top: 18px;
+}
+
+.connected-users-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.connected-users-empty {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.user-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px 5px 6px;
+    border-radius: 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.user-chip-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.connect-user-wrapper {
+    position: relative;
+}
+
+.connect-user-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    box-shadow: var(--sh-menu);
+    min-width: 200px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 50;
+    padding: 4px;
+    animation: menu-in 0.1s ease;
+}
+
+.connect-user-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.08s;
+}
+
+.connect-user-item:hover:not(:disabled) {
+    background: var(--bg);
+}
+
+.connect-user-item:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.connect-user-empty {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--muted);
 }
