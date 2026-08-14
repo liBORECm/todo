@@ -34,8 +34,112 @@
     --r-xs: 6px;
 
     --p-crit: #c81541;
-    --p-std: #d97706;
-    --p-low: #16a34a;
+    --p-std: #16a34a;
+    --p-low: #6b6e88;
+}
+
+/* ── Themes ──────────────────────────────────── */
+/* Default (:root above) is "Pink & Navy". The rest override the same
+   tokens via [data-theme]; semantic colors (danger/success/warning,
+   priority colors) stay constant across themes on purpose. */
+
+:root[data-theme='green-dark'] {
+    --pink: #22c55e;
+    --pink-hv: #16a34a;
+    --navy: #1f6b3f;
+    --navy-2: #15532c;
+    --bg: #0d1310;
+    --surface: #141f19;
+    --surface-2: #1b2b22;
+    --border: #26392e;
+    --ink: #e8f4ec;
+    --muted: #8aa393;
+    --faint: #4c6455;
+
+    --sh-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --sh-lift: 0 8px 28px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --sh-menu: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='ocean'] {
+    --pink: #0891b2;
+    --pink-hv: #0e7490;
+    --navy: #0c4a6e;
+    --navy-2: #164e63;
+    --bg: #f0f9fb;
+    --surface: #ffffff;
+    --surface-2: #e6f4f7;
+    --border: #d5eaef;
+    --ink: #0c2f3d;
+    --muted: #5b7d88;
+    --faint: #a9c7cf;
+
+    --sh-card:
+        0 1px 3px rgba(12, 47, 61, 0.07), 0 1px 2px rgba(12, 47, 61, 0.04);
+    --sh-lift:
+        0 8px 28px rgba(12, 47, 61, 0.13), 0 2px 8px rgba(12, 47, 61, 0.07);
+    --sh-menu:
+        0 6px 20px rgba(12, 47, 61, 0.12), 0 1px 4px rgba(12, 47, 61, 0.06);
+}
+
+:root[data-theme='nord'] {
+    --pink: #88c0d0;
+    --pink-hv: #81a1c1;
+    --navy: #5e81ac;
+    --navy-2: #3b4252;
+    --bg: #2e3440;
+    --surface: #3b4252;
+    --surface-2: #434c5e;
+    --border: #4c566a;
+    --ink: #eceff4;
+    --muted: #d8dee9;
+    --faint: #4c566a;
+
+    --sh-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+    --sh-lift: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --sh-menu: 0 6px 20px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme='sunset'] {
+    --pink: #ef476f;
+    --pink-hv: #d63d61;
+    --navy: #7c3a5c;
+    --navy-2: #5c2a45;
+    --bg: #fff5f0;
+    --surface: #ffffff;
+    --surface-2: #ffe9dc;
+    --border: #ffd9c2;
+    --ink: #4a2434;
+    --muted: #9c6b78;
+    --faint: #d9a8ab;
+
+    --sh-card:
+        0 1px 3px rgba(74, 36, 52, 0.07), 0 1px 2px rgba(74, 36, 52, 0.04);
+    --sh-lift:
+        0 8px 28px rgba(74, 36, 52, 0.13), 0 2px 8px rgba(74, 36, 52, 0.07);
+    --sh-menu:
+        0 6px 20px rgba(74, 36, 52, 0.12), 0 1px 4px rgba(74, 36, 52, 0.06);
+}
+
+:root[data-theme='lavender'] {
+    --pink: #8b5cf6;
+    --pink-hv: #7c3aed;
+    --navy: #4c3575;
+    --navy-2: #362563;
+    --bg: #f8f6fc;
+    --surface: #ffffff;
+    --surface-2: #efe9fa;
+    --border: #e2d7f5;
+    --ink: #362a52;
+    --muted: #8577a3;
+    --faint: #c9bce3;
+
+    --sh-card:
+        0 1px 3px rgba(54, 42, 82, 0.07), 0 1px 2px rgba(54, 42, 82, 0.04);
+    --sh-lift:
+        0 8px 28px rgba(54, 42, 82, 0.13), 0 2px 8px rgba(54, 42, 82, 0.07);
+    --sh-menu:
+        0 6px 20px rgba(54, 42, 82, 0.12), 0 1px 4px rgba(54, 42, 82, 0.06);
 }
 
 html,
@@ -85,8 +189,11 @@ body {
     color: var(--pink);
 }
 
-.navbar-switch-user {
+.navbar-actions {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* ── Page layout ─────────────────────────────── */
@@ -335,13 +442,13 @@ body {
     color: var(--p-crit);
 }
 .badge-standard {
-    background: rgba(217, 119, 6, 0.08);
-    border-color: rgba(217, 119, 6, 0.2);
+    background: rgba(22, 163, 74, 0.08);
+    border-color: rgba(22, 163, 74, 0.2);
     color: var(--p-std);
 }
 .badge-low {
-    background: rgba(22, 163, 74, 0.08);
-    border-color: rgba(22, 163, 74, 0.2);
+    background: rgba(107, 110, 136, 0.08);
+    border-color: rgba(107, 110, 136, 0.2);
     color: var(--p-low);
 }
 
@@ -530,6 +637,39 @@ body {
 }
 .menu-item.danger {
     color: var(--danger);
+}
+
+/* ── Theme switcher ──────────────────────────── */
+
+.theme-switcher-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.theme-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-switcher-dropdown {
+    min-width: 180px;
+}
+
+.theme-switcher-item {
+    position: relative;
+}
+
+.theme-switcher-item.selected {
+    color: var(--pink);
+}
+
+.theme-switcher-check {
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 /* ── Confirm dialog ──────────────────────────── */

@@ -18,6 +18,8 @@ import RepeatedTaskFormPage from './pages/RepeatedTaskFormPage'
 import RTaskViewPage from './pages/RTaskViewPage'
 import UserSelectionPage from './pages/UserSelectionPage'
 import { UserProvider, useUser } from './context/UserContext'
+import { ThemeProvider } from './context/ThemeContext'
+import ThemeSwitcher from './components/ThemeSwitcher'
 
 function RequireUser({ children }: { children: ReactNode }) {
     const { userId } = useUser()
@@ -33,16 +35,19 @@ function Navbar() {
             <Link to="/" className="navbar-brand">
                 Thorns<span className="dot">.</span>Todo
             </Link>
-            <button
-                type="button"
-                className="btn btn-ghost btn-sm navbar-switch-user"
-                onClick={() => {
-                    clearUser()
-                    navigate('/select-user')
-                }}
-            >
-                Switch user
-            </button>
+            <div className="navbar-actions">
+                <ThemeSwitcher />
+                <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => {
+                        clearUser()
+                        navigate('/select-user')
+                    }}
+                >
+                    Switch user
+                </button>
+            </div>
         </nav>
     )
 }
@@ -143,30 +148,38 @@ function AppShell() {
 
 export default function App() {
     return (
-        <UserProvider>
-            <BrowserRouter>
-                <AppShell />
-            </BrowserRouter>
-            <Toaster
-                position="bottom-right"
-                toastOptions={{
-                    style: {
-                        borderRadius: '9px',
-                        background: '#1b1d40',
-                        color: '#ffffff',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        border: '1px solid rgba(255,255,255,.1)',
-                        boxShadow: '0 8px 24px rgba(27,29,64,.2)',
-                    },
-                    success: {
-                        iconTheme: { primary: '#16a34a', secondary: '#fff' },
-                    },
-                    error: {
-                        iconTheme: { primary: '#ee1f53', secondary: '#fff' },
-                    },
-                }}
-            />
-        </UserProvider>
+        <ThemeProvider>
+            <UserProvider>
+                <BrowserRouter>
+                    <AppShell />
+                </BrowserRouter>
+                <Toaster
+                    position="bottom-right"
+                    toastOptions={{
+                        style: {
+                            borderRadius: '9px',
+                            background: 'var(--navy)',
+                            color: '#ffffff',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            border: '1px solid rgba(255,255,255,.1)',
+                            boxShadow: '0 8px 24px rgba(27,29,64,.2)',
+                        },
+                        success: {
+                            iconTheme: {
+                                primary: 'var(--success)',
+                                secondary: '#fff',
+                            },
+                        },
+                        error: {
+                            iconTheme: {
+                                primary: 'var(--pink)',
+                                secondary: '#fff',
+                            },
+                        },
+                    }}
+                />
+            </UserProvider>
+        </ThemeProvider>
     )
 }
