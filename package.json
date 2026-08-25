@@ -9,6 +9,10 @@
         "logs": "pm2 logs thorns-todo",
         "build": "cd frontend && npm run build && cd .. && npm run swagger && tsc -p .",
         "dev": "nodemon src/server.ts",
+        "migrate:latest": "npx knex migrate:latest",
+        "migrate:up": "npx knex migrate:up",
+        "migrate:down": "npx knex migrate:down",
+        "migrate:make": "npx knex migrate:make -x ts",
         "prepare": "husky",
         "swagger": "ts-node src/swagger.ts"
     },
