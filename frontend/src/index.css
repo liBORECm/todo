@@ -854,7 +854,7 @@ body {
     font: inherit;
     font-size: 14px;
     color: var(--ink);
-    background: #fff;
+    background: var(--surface);
     transition: border-color 0.12s;
     outline: none;
 }
@@ -903,7 +903,7 @@ body {
     font: inherit;
     font-size: 14px;
     color: var(--ink);
-    background: #fff;
+    background: var(--surface);
     cursor: pointer;
     transition: border-color 0.12s;
     outline: none;
