@@ -9,6 +9,7 @@ export class TodoTableBase extends CRUDEntity {
         public updatedAt: Date,
         public deletedAt: Date,
         public name: string,
+        public silent: boolean,
     ) {
         super(id, createdAt, updatedAt, deletedAt)
     }
@@ -21,9 +22,10 @@ export class TodoTable extends TodoTableBase {
         public updatedAt: Date,
         public deletedAt: Date,
         public name: string,
+        public silent: boolean,
         public users: User[],
     ) {
-        super(id, createdAt, updatedAt, deletedAt, name)
+        super(id, createdAt, updatedAt, deletedAt, name, silent)
     }
 }
 
@@ -56,6 +58,7 @@ export class TodoTree {
  *              - id
  *              - createdAt
  *              - updatedAt
+ *              - silent
  *          properties:
  *              name:
  *                  type: string
@@ -73,6 +76,9 @@ export class TodoTree {
  *                  type: string
  *                  format: date-time
  *                  nullable: true
+ *              silent:
+ *                  type: boolean
+ *                  default: false
  *
  *      TodoTable:
  *          allOf:
