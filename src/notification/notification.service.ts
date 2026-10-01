@@ -4,22 +4,13 @@ import simpleTaskService from '../simpleTask/simpleTask.service'
 import { SimpleTaskBase, TaskPriority } from '../simpleTask/simpleTask.model'
 import { RTaskInstance } from '../rTaskInstance/rTaskInstance.model'
 import rTaskInstanceService from '../rTaskInstance/rTaskInstance.service'
-
-const CLOSE_DEADLINE_MS = 24 * 60 * 60 * 1000
+import { isUrgent } from '../common/taskUrgency'
 
 type NotifiableTask = {
     title: string
     priority: TaskPriority
     deadline: Date | null
     tableName: string
-}
-
-function isUrgent(task: NotifiableTask): boolean {
-    return (
-        task.priority === TaskPriority.CRITICAL ||
-        (task.deadline !== null &&
-            task.deadline.getTime() - Date.now() <= CLOSE_DEADLINE_MS)
-    )
 }
 
 function formatTask(task: NotifiableTask, includeTableName: boolean): string {
@@ -121,7 +112,7 @@ class NotificationService {
         }
 
         const hasUrgent = [...allSimpleTasks, ...allRepeatedTasks].some(
-            (task) => isUrgent({ ...task, tableName: '' }),
+            isUrgent,
         )
 
         await fetch(`${this.ntfyUrl}/todo-${userId}`, {

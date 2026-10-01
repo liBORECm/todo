@@ -48,6 +48,7 @@ export class TodoTableService extends CRUDService<TodoTableBase, TodoTable> {
                 record.updatedAt,
                 record.deletedAt,
                 record.name,
+                record.silent,
                 users,
             )
         })

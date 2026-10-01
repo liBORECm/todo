@@ -62,6 +62,25 @@ class UserController extends CRUDController<User, User, UserService> {
             }
         })
 
+        router.get(
+            '/tables/:userId/counts',
+            async (req: Request, res: Response) => {
+                try {
+                    const counts = await this.service.getTodoTableTaskCounts(
+                        Number(req.params.userId),
+                    )
+                    return res.status(200).json(counts)
+                } catch (e) {
+                    console.log(e)
+                    if (isHttpError(e))
+                        return res.status(e.status).json({ error: e.message })
+
+                    const { status, message } = InternalError
+                    return res.status(status).json({ error: message })
+                }
+            },
+        )
+
         router.post(
             '/setTables/:userId',
             async (req: Request, res: Response) => {
@@ -299,6 +318,41 @@ export default new UserController().routes()
  *                          type: array
  *                          items:
  *                              $ref: '#/components/schemas/TodoTable'
+ *          500:
+ *              description: Internal error
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/InternalError'
+ *
+ * /api/v1/user/tables/{userId}/counts:
+ *  get:
+ *      tags:
+ *          - User
+ *      summary: Get unfinished task counts per todo table joined to a user
+ *      parameters:
+ *          - name: userId
+ *            in: path
+ *            description: Id of the user
+ *            required: true
+ *            schema:
+ *              type: number
+ *      responses:
+ *          200:
+ *              description: Urgent/normal unfinished task counts per todo table.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  tableId:
+ *                                      type: number
+ *                                  urgentCount:
+ *                                      type: number
+ *                                  normalCount:
+ *                                      type: number
  *          500:
  *              description: Internal error
  *              content:

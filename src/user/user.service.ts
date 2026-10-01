@@ -4,6 +4,15 @@ import db from '../db'
 import { User } from './user.model'
 import { TodoTableBase } from '../todoTable/todoTable.model'
 import todoTableService from '../todoTable/todoTable.service'
+import simpleTaskService from '../simpleTask/simpleTask.service'
+import rTaskInstanceService from '../rTaskInstance/rTaskInstance.service'
+import { isUrgent } from '../common/taskUrgency'
+
+export type TodoTableTaskCounts = {
+    tableId: number
+    urgentCount: number
+    normalCount: number
+}
 
 class UserService extends CRUDService<User, User> {
     public async getTodoTables(
@@ -29,6 +38,41 @@ class UserService extends CRUDService<User, User> {
         if (limit !== undefined) query = query.limit(limit)
 
         return (await query) as Array<TodoTableBase>
+    }
+
+    public async getTodoTableTaskCounts(
+        userId: number,
+    ): Promise<TodoTableTaskCounts[]> {
+        const tableIds = (await this.getTodoTables(userId)).map(
+            (table) => table.id,
+        )
+
+        const counts = new Map<number, TodoTableTaskCounts>(
+            tableIds.map((tableId) => [
+                tableId,
+                { tableId, urgentCount: 0, normalCount: 0 },
+            ]),
+        )
+        if (tableIds.length === 0) return []
+
+        const allSimpleTasks = await simpleTaskService.getAll((query) =>
+            query
+                .whereIn('table_id', tableIds)
+                .whereNull('parent_id')
+                .whereNull('finished_at'),
+        )
+        const allRepeatedTasks = await rTaskInstanceService.getAll((query) =>
+            query.whereIn('table_id', tableIds).whereNull('finished_at'),
+        )
+
+        for (const task of [...allSimpleTasks, ...allRepeatedTasks]) {
+            const entry = counts.get(task.tableId)
+            if (entry === undefined) continue
+            if (isUrgent(task)) entry.urgentCount++
+            else entry.normalCount++
+        }
+
+        return Array.from(counts.values())
     }
 
     public async setJoinedTodoTables(userId: number, todoTableIds: number[]) {
