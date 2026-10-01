@@ -71,6 +71,13 @@ class NotificationService {
         const totalCount = allSimpleTasks.length + allRepeatedTasks.length
         if (totalCount === 0) return
 
+        const tableIdsWithTasks = new Set(
+            [...allSimpleTasks, ...allRepeatedTasks].map(
+                (task) => task.tableId,
+            ),
+        )
+        const includeTableName = tableIdsWithTasks.size > 1
+
         const sections: string[] = []
         if (allSimpleTasks.length > 0) {
             sections.push(
@@ -85,7 +92,7 @@ class NotificationService {
                                         (table) => table.id === task.tableId,
                                     )?.name ?? '',
                             },
-                            tableIds.length > 1,
+                            includeTableName,
                         ),
                     ),
                 ].join('\n'),
@@ -104,7 +111,7 @@ class NotificationService {
                                         (table) => table.id === task.tableId,
                                     )?.name ?? '',
                             },
-                            tableIds.length > 1,
+                            includeTableName,
                         ),
                     ),
                 ].join('\n'),
