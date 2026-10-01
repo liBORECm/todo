@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import type { TodoTable } from '../types'
-import { getUserTodoTables, deleteTodoTable } from '../api'
+import type { TodoTable, TodoTableTaskCounts } from '../types'
+import {
+    getUserTodoTables,
+    getUserTodoTableTaskCounts,
+    deleteTodoTable,
+} from '../api'
 import ThreeDotsMenu from '../components/ThreeDotsMenu'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { avatarColor } from '../utils/avatar'
@@ -12,14 +16,21 @@ export default function TodoTablesPage() {
     const navigate = useNavigate()
     const { userId } = useUser()
     const [tables, setTables] = useState<TodoTable[]>([])
+    const [counts, setCounts] = useState<Map<number, TodoTableTaskCounts>>(
+        new Map(),
+    )
     const [loading, setLoading] = useState(true)
     const [confirmId, setConfirmId] = useState<number | null>(null)
 
     const load = useCallback(async () => {
         if (userId === undefined) return
         try {
-            const data = await getUserTodoTables(userId)
+            const [data, countsData] = await Promise.all([
+                getUserTodoTables(userId),
+                getUserTodoTableTaskCounts(userId),
+            ])
             setTables(data)
+            setCounts(new Map(countsData.map((c) => [c.tableId, c])))
         } catch (err) {
             toast.error((err as Error).message)
         } finally {
@@ -82,87 +93,119 @@ export default function TodoTablesPage() {
                 </div>
             ) : (
                 <div className="table-grid">
-                    {tables.map((table) => (
-                        <div
-                            key={table.id}
-                            className="table-card"
-                            onClick={() => navigate(`/todo-table/${table.id}`)}
-                        >
+                    {tables.map((table) => {
+                        const tableCounts = counts.get(table.id)
+                        return (
                             <div
-                                className="table-avatar"
-                                style={{ background: avatarColor(table.id) }}
+                                key={table.id}
+                                className="table-card"
+                                onClick={() =>
+                                    navigate(`/todo-table/${table.id}`)
+                                }
                             >
-                                {table.name.charAt(0)}
-                            </div>
-                            <div className="table-card-info">
-                                <div className="table-card-name">
-                                    {table.name}
+                                <div
+                                    className="table-avatar"
+                                    style={{
+                                        background: avatarColor(table.id),
+                                    }}
+                                >
+                                    {table.name.charAt(0)}
                                 </div>
-                                <div className="table-card-meta">
-                                    Created{' '}
-                                    {new Date(
-                                        table.createdAt,
-                                    ).toLocaleDateString(undefined, {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                    })}
+                                <div className="table-card-info">
+                                    <div className="table-card-name">
+                                        {table.name}
+                                    </div>
+                                    <div className="table-card-meta">
+                                        Created{' '}
+                                        {new Date(
+                                            table.createdAt,
+                                        ).toLocaleDateString(undefined, {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                        })}
+                                    </div>
+                                    {tableCounts &&
+                                        (tableCounts.urgentCount > 0 ||
+                                            tableCounts.normalCount > 0) && (
+                                            <div className="table-card-counts">
+                                                {tableCounts.urgentCount >
+                                                    0 && (
+                                                    <span className="badge badge-critical">
+                                                        {
+                                                            tableCounts.urgentCount
+                                                        }{' '}
+                                                        urgent
+                                                    </span>
+                                                )}
+                                                {tableCounts.normalCount >
+                                                    0 && (
+                                                    <span className="badge">
+                                                        {
+                                                            tableCounts.normalCount
+                                                        }{' '}
+                                                        open
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
                                 </div>
-                            </div>
-                            <ThreeDotsMenu
-                                items={[
-                                    {
-                                        label: 'Edit',
-                                        icon: (
-                                            <svg
-                                                width="13"
-                                                height="13"
-                                                viewBox="0 0 14 14"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            >
-                                                <path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" />
-                                            </svg>
-                                        ),
-                                        onClick: () =>
-                                            navigate(
-                                                `/todo-table/${table.id}/edit`,
+                                <ThreeDotsMenu
+                                    items={[
+                                        {
+                                            label: 'Edit',
+                                            icon: (
+                                                <svg
+                                                    width="13"
+                                                    height="13"
+                                                    viewBox="0 0 14 14"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                >
+                                                    <path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" />
+                                                </svg>
                                             ),
-                                    },
-                                    {
-                                        label: 'Delete',
-                                        danger: true,
-                                        icon: (
-                                            <svg
-                                                width="13"
-                                                height="13"
-                                                viewBox="0 0 14 14"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            >
-                                                <polyline points="2,4 12,4" />
-                                                <path d="M5,4V2h4v2M5.5,4v8M8.5,4v8" />
-                                                <rect
-                                                    x="3"
-                                                    y="4"
-                                                    width="8"
-                                                    height="9"
-                                                    rx="1"
-                                                />
-                                            </svg>
-                                        ),
-                                        onClick: () => setConfirmId(table.id),
-                                    },
-                                ]}
-                            />
-                        </div>
-                    ))}
+                                            onClick: () =>
+                                                navigate(
+                                                    `/todo-table/${table.id}/edit`,
+                                                ),
+                                        },
+                                        {
+                                            label: 'Delete',
+                                            danger: true,
+                                            icon: (
+                                                <svg
+                                                    width="13"
+                                                    height="13"
+                                                    viewBox="0 0 14 14"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                >
+                                                    <polyline points="2,4 12,4" />
+                                                    <path d="M5,4V2h4v2M5.5,4v8M8.5,4v8" />
+                                                    <rect
+                                                        x="3"
+                                                        y="4"
+                                                        width="8"
+                                                        height="9"
+                                                        rx="1"
+                                                    />
+                                                </svg>
+                                            ),
+                                            onClick: () =>
+                                                setConfirmId(table.id),
+                                        },
+                                    ]}
+                                />
+                            </div>
+                        )
+                    })}
                 </div>
             )}
 

@@ -11,6 +11,7 @@ import type {
     RTaskInstance,
     User,
     UserInput,
+    TodoTableTaskCounts,
 } from './types'
 
 const BASE = '/api/v1'
@@ -69,6 +70,9 @@ export const createUser = (data: UserInput) =>
 
 export const getUserTodoTables = (userId: number) =>
     request<TodoTable[]>(`/user/tables/${userId}?limit=1000`)
+
+export const getUserTodoTableTaskCounts = (userId: number) =>
+    request<TodoTableTaskCounts[]>(`/user/tables/${userId}/counts`)
 
 export const setUserTodoTables = (userId: number, tableIds: number[]) =>
     request<void>(

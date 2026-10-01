@@ -315,6 +315,13 @@ body {
     margin-top: 2px;
 }
 
+.table-card-counts {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
 /* ── Task list card ──────────────────────────── */
 
 .task-list-card {

@@ -25,6 +25,12 @@ export interface TodoTableWithUsers extends TodoTable {
     users: User[]
 }
 
+export interface TodoTableTaskCounts {
+    tableId: number
+    urgentCount: number
+    normalCount: number
+}
+
 export interface SimpleTaskBase {
     id: number
     tableId: number
