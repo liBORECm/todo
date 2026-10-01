@@ -885,6 +885,27 @@ body {
     padding-top: 6px;
 }
 
+.form-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.form-checkbox-row input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
 /* ── Parent task picker ──────────────────────── */
 
 .parent-picker-wrapper {

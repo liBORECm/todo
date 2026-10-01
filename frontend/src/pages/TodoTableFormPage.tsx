@@ -17,6 +17,7 @@ export default function TodoTableFormPage() {
     const isEdit = !!id
     const navigate = useNavigate()
     const [name, setName] = useState('')
+    const [silent, setSilent] = useState(false)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [connectedUsers, setConnectedUsers] = useState<User[]>([])
@@ -39,6 +40,7 @@ export default function TodoTableFormPage() {
     const loadTable = useCallback(async () => {
         const t = await getTodoTable(Number(id))
         setName(t.name)
+        setSilent(t.silent)
         setConnectedUsers(t.users)
     }, [id])
 
@@ -96,10 +98,13 @@ export default function TodoTableFormPage() {
         setSaving(true)
         try {
             if (isEdit) {
-                await updateTodoTable(Number(id), { name: name.trim() })
+                await updateTodoTable(Number(id), { name: name.trim(), silent })
                 toast.success('Table updated.')
             } else {
-                const created = await createTodoTable({ name: name.trim() })
+                const created = await createTodoTable({
+                    name: name.trim(),
+                    silent,
+                })
                 for (const user of connectedUsers) {
                     await addTableToUser(user.id, created.id)
                 }
@@ -159,6 +164,20 @@ export default function TodoTableFormPage() {
                             placeholder="e.g. Work, Personal, Shopping"
                             autoFocus
                         />
+                    </div>
+                    <div className="form-group">
+                        <label className="form-checkbox-row">
+                            <input
+                                type="checkbox"
+                                checked={silent}
+                                onChange={(e) => setSilent(e.target.checked)}
+                            />
+                            Silent (don't send notifications)
+                        </label>
+                        <p className="form-hint">
+                            Tasks in a silent table are excluded from the daily
+                            notification.
+                        </p>
                     </div>
                     <div className="form-actions">
                         <button

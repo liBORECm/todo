@@ -3,6 +3,7 @@ export type TaskPriority = 'critical' | 'standard' | 'low'
 export interface TodoTable {
     id: number
     name: string
+    silent: boolean
     createdAt: string
     updatedAt: string
     deletedAt: string | null

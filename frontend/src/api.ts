@@ -41,13 +41,16 @@ export const getTodoTables = () =>
 export const getTodoTable = (id: number) =>
     request<TodoTableWithUsers>(`/todo-table/${id}`)
 
-export const createTodoTable = (data: { name: string }) =>
+export const createTodoTable = (data: { name: string; silent?: boolean }) =>
     request<TodoTableWithUsers>('/todo-table', {
         method: 'POST',
         body: JSON.stringify(data),
     })
 
-export const updateTodoTable = (id: number, data: { name?: string }) =>
+export const updateTodoTable = (
+    id: number,
+    data: { name?: string; silent?: boolean },
+) =>
     request<TodoTableWithUsers>(`/todo-table/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
