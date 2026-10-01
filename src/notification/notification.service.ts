@@ -11,6 +11,7 @@ type NotifiableTask = {
     title: string
     priority: TaskPriority
     deadline: Date | null
+    tableName: string
 }
 
 function isUrgent(task: NotifiableTask): boolean {
@@ -21,7 +22,7 @@ function isUrgent(task: NotifiableTask): boolean {
     )
 }
 
-function formatTask(task: NotifiableTask): string {
+function formatTask(task: NotifiableTask, includeTableName: boolean): string {
     const deadlineText = task.deadline
         ? ` (due ${task.deadline.toLocaleString('en-GB', {
               timeZone: 'Europe/Prague',
@@ -29,8 +30,11 @@ function formatTask(task: NotifiableTask): string {
               timeStyle: 'short',
           })})`
         : ''
+    const tableName = includeTableName ? `${task.tableName} - ` : ''
     const line = `${task.title}${deadlineText}`
-    return isUrgent(task) ? `- **${line}** ⚠️` : `- ${line}`
+    return isUrgent(task)
+        ? `- ${tableName}**${line}** ⚠️`
+        : `- ${tableName}${line}`
 }
 
 class NotificationService {
@@ -56,9 +60,11 @@ class NotificationService {
     }
 
     async sendNotification(userId: number) {
-        const tableIds = (await userService.getTodoTables(userId)).map(
-            (table) => table.id,
+        const tables = (await userService.getTodoTables(userId)).filter(
+            (table) => !table.silent,
         )
+        const tableIds = tables.map((table) => table.id)
+
         let allSimpleTasks: SimpleTaskBase[] = await simpleTaskService.getAll(
             (query) =>
                 query
@@ -77,20 +83,45 @@ class NotificationService {
         const sections: string[] = []
         if (allSimpleTasks.length > 0) {
             sections.push(
-                ['**Tasks**', ...allSimpleTasks.map(formatTask)].join('\n'),
+                [
+                    '**Tasks**',
+                    ...allSimpleTasks.map((task) =>
+                        formatTask(
+                            {
+                                ...task,
+                                tableName:
+                                    tables.find(
+                                        (table) => table.id === task.tableId,
+                                    )?.name ?? '',
+                            },
+                            tableIds.length > 1,
+                        ),
+                    ),
+                ].join('\n'),
             )
         }
         if (allRepeatedTasks.length > 0) {
             sections.push(
                 [
                     '**Repeated tasks**',
-                    ...allRepeatedTasks.map(formatTask),
+                    ...allRepeatedTasks.map((task) =>
+                        formatTask(
+                            {
+                                ...task,
+                                tableName:
+                                    tables.find(
+                                        (table) => table.id === task.tableId,
+                                    )?.name ?? '',
+                            },
+                            tableIds.length > 1,
+                        ),
+                    ),
                 ].join('\n'),
             )
         }
 
         const hasUrgent = [...allSimpleTasks, ...allRepeatedTasks].some(
-            isUrgent,
+            (task) => isUrgent({ ...task, tableName: '' }),
         )
 
         await fetch(`${this.ntfyUrl}/todo-${userId}`, {
